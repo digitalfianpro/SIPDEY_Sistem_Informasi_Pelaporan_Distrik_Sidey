@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Portal Dokumen Enterprise - Distrik Sidey</title>
+    
+    <!-- Scripts & Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase Library Loading -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, query, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        window.FirebaseLib = { initializeApp, getAuth, signInAnonymously, getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc, query, setDoc };
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        slate: { 850: '#151e2e', 900: '#0f172a' }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'slide-up': 'slideUp 0.4s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { transform: 'translateY(15px)', opacity: '0' }, '100%': { opacity: '1' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        .glass-panel { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.8); border-radius: 10px; }
+        
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            .print-container, .print-container * { visibility: visible; }
+            .print-container { position: absolute; left: 0; top: 0; width: 100%; color: black; background: white; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const LOGO_URL = "https://i.ibb.co.com/DP0G84Qm/Chat-GPT-Image-Jul-27-2026-05-10-28-PM.png";
+        
+        const DEFAULT_VILLAGES = [
+            "Manggupi", "Womnowi", "Meyof 1", "Saray", "Sidey Baru", "Waramui",
+            "Sidey Jaya", "Kaironi", "Sidey Makmur", "Kasi", "Wariki", "Sidey"
+        ];
+
+        const Logo = ({ className, alt = "Logo", style = {} }) => {
+            const [cleanSrc, setCleanSrc] = useState(LOGO_URL);
+
+            useEffect(() => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.src = LOGO_URL;
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const w = img.naturalWidth || img.width;
+                        const h = img.naturalHeight || img.height;
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const imageData = ctx.getImageData(0, 0, w, h);
+                        const data = imageData.data;
+
+                        const visited = new Uint8Array(w * h);
+                        const queue = [];
+
+                        // Menambahkan seluruh piksel tepi luar gambar untuk pemindaian flood-fill
+                        for (let x = 0; x < w; x++) {
+                            queue.push(x, 0);
+                            queue.push(x, h - 1);
+                        }
+                        for (let y = 0; y < h; y++) {
+                            queue.push(0, y);
+                            queue.push(w - 1, y);
+                        }
+
+                        while (queue.length > 0) {
+                            const y = queue.pop();
+                            const x = queue.pop();
+                            const idx = y * w + x;
+                            if (visited[idx]) continue;
+                            visited[idx] = 1;
+
+                            const pIdx = idx * 4;
+                            const r = data[pIdx];
+                            const g = data[pIdx + 1];
+                            const b = data[pIdx + 2];
+
+                            // Deteksi pola latar belakang putih & abu-abu terang di luar bingkai logo
+                            const isCheckerboard = (r > 150 && g > 150 && b > 150) && 
+                                                  (Math.abs(r - g) < 25 && Math.abs(g - b) < 25 && Math.abs(r - b) < 25);
+
+                            if (isCheckerboard) {
+                                data[pIdx + 3] = 0; // Transparan
+
+                                if (x > 0) queue.push(x - 1, y);
+                                if (x < w - 1) queue.push(x + 1, y);
+                                if (y > 0) queue.push(x, y - 1);
+                                if (y < h - 1) queue.push(x, y + 1);
+                            }
+                        }
+
+                        ctx.putImageData(imageData, 0, 0);
+                        setCleanSrc(canvas.toDataURL('image/png'));
+                    } catch (err) {
+                        console.warn("Proses pembersihan latar belakang logo terlewati:", err);
+                    }
+                };
+            }, []);
+
+            return <img src={cleanSrc} alt={alt} className={className} style={style} />;
+        };
+
+        const VILLAGES = [
+            "Manggupi", "Womnowi", "Meyof 1", "Saray", "Sidey Baru", "Waramui",
+            "Sidey Jaya", "Kaironi", "Sidey Makmur", "Kasi", "Wariki", "Sidey"
+        ];
+
+        const Toast = ({ message, type, onClose }) => (
+            <div className={`fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md p-4 rounded-xl shadow-2xl flex items-center justify-between gap-3 animate-slide-up z-[70] ${type === 'error' ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}`}>
+                <div className="flex items-center gap-3 overflow-hidden">
+                    <i className={`ph-bold ${type === 'error' ? 'ph-warning-circle' : 'ph-check-circle'} text-xl flex-shrink-0`}></i>
+                    <p className="text-xs sm:text-sm font-medium leading-tight truncate">{message}</p>
+                </div>
+                <button onClick={onClose} className="p-1 hover:opacity-80 transition-opacity flex-shrink-0"><i className="ph ph-x text-lg"></i></button>
+            </div>
+        );
+
+        const ActionModal = ({ title, onClose, children }) => (
+            <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50 animate-fade-in overflow-y-auto">
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg my-auto overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+                    <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/90 flex-shrink-0">
+                        <h3 className="font-semibold text-white text-sm sm:text-base">{title}</h3>
+                        <button onClick={onClose} className="p-1 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-700"><i className="ph ph-x text-lg"></i></button>
+                    </div>
+                    <div className="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [user, setUser] = useState(null);
+            const [docs, setDocs] = useState([]);
+            const [categories, setCategories] = useState([]);
+            const [villages, setVillages] = useState([]);
+            
+            const [currentView, setCurrentView] = useState('dashboard');
+            const [selectedKampung, setSelectedKampung] = useState(null);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            
+            // Modal States
+            const [isUploadOpen, setUploadOpen] = useState(false);
+            const [selectedFile, setSelectedFile] = useState(null);
+            const [uploadFileName, setUploadFileName] = useState('');
+            const [previewDoc, setPreviewDoc] = useState(null);
+            const [toast, setToast] = useState(null);
+            
+            // Category Management States
+            const [isAddCategoryOpen, setAddCategoryOpen] = useState(false);
+            const [editCategory, setEditCategory] = useState(null);
+
+            // Village Management States
+            const [isAddVillageOpen, setAddVillageOpen] = useState(false);
+            const [editVillage, setEditVillage] = useState(null);
+            const [showVillagesInMenu, setShowVillagesInMenu] = useState(true);
+            
+            // Edit & Delete Auth States
+            const [authPrompt, setAuthPrompt] = useState(null);
+            const [adminPwdInput, setAdminPwdInput] = useState('');
+            const [editDoc, setEditDoc] = useState(null);
+            const [showAdminPwdInput, setShowAdminPwdInput] = useState(false);
+            
+            // Print State
+            const [printContext, setPrintContext] = useState(null);
+
+            // Auth Input States
+            const [loginRole, setLoginRole] = useState('umum');
+            const [loginName, setLoginName] = useState('');
+            const [loginPwd, setLoginPwd] = useState('');
+            const [loginError, setLoginError] = useState('');
+            const [showLoginPwd, setShowLoginPwd] = useState(false);
+
+            // PWA Installation
+            const [deferredPrompt, setDeferredPrompt] = useState(null);
+            const [showInstallGuide, setShowInstallGuide] = useState(false);
+
+            const showToast = (msg, type = 'success') => {
+                setToast({ message: msg, type });
+                setTimeout(() => setToast(null), 3500);
+            };
+
+            // Catch PWA beforeinstallprompt event
+            useEffect(() => {
+                const handleBeforeInstallPrompt = (e) => {
+                    e.preventDefault();
+                    setDeferredPrompt(e);
+                };
+                window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+                return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            }, []);
+
+            // Firebase Initialization & Firestore Listeners
+            useEffect(() => {
+                let unsubscribeDocs = null;
+                let unsubscribeCats = null;
+                let unsubscribeVillages = null;
+
+                const initDb = async () => {
+                    if (!window.FirebaseLib) return;
+                    const { initializeApp, getAuth, signInAnonymously, getFirestore, collection, onSnapshot, query, setDoc, doc } = window.FirebaseLib;
+                    
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyBoW3GSpSgQ-DCz8PZHpQmigARek_ImXrs",
+                        authDomain: "aplikasi-penyimpanan-dok-d8938.firebaseapp.com",
+                        projectId: "aplikasi-penyimpanan-dok-d8938",
+                        storageBucket: "aplikasi-penyimpanan-dok-d8938.firebasestorage.app",
+                        messagingSenderId: "1010696232229",
+                        appId: "1:1010696232229:web:059fd827337d7ce4930ecc",
+                        measurementId: "G-M4QSLLGXX9"
+                    };
+
+                    try {
+                        const app = initializeApp(firebaseConfig);
+                        const auth = getAuth(app);
+                        const db = getFirestore(app);
+                        
+                        await signInAnonymously(auth);
+                        
+                        // Listen to Documents
+                        const qDocs = query(collection(db, 'documents'));
+                        unsubscribeDocs = onSnapshot(qDocs, (snapshot) => {
+                            const data = [];
+                            snapshot.forEach(d => data.push({ id: d.id, ...d.data() }));
+                            data.sort((a,b) => b.createdAt - a.createdAt);
+                            setDocs(data);
+                        });
+
+                        // Listen to Categories (Folders)
+                        const qCats = query(collection(db, 'categories'));
+                        unsubscribeCats = onSnapshot(qCats, async (snapshot) => {
+                            if (snapshot.empty) {
+                                const DEFAULT_CATEGORIES = [
+                                    { id: 'rkpk_apbk', name: 'RKPK / APBK', icon: 'ph-book-bookmark' },
+                                    { id: 'perangkat_kampung', name: 'Data Perangkat Kampung', icon: 'ph-users-three' },
+                                    { id: 'perangkat_bamuskam', name: 'Data Perangkat Bamuskam', icon: 'ph-users' },
+                                    { id: 'dana_desa', name: 'Pelaporan Dana Desa', icon: 'ph-money' },
+                                    { id: 'nominatif', name: 'Data Nominatif Kampung', icon: 'ph-file-text' }
+                                ];
+                                for (let i = 0; i < DEFAULT_CATEGORIES.length; i++) {
+                                    const cat = DEFAULT_CATEGORIES[i];
+                                    await setDoc(doc(db, 'categories', cat.id), {
+                                        name: cat.name,
+                                        icon: cat.icon,
+                                        createdAt: Date.now() + i
+                                    });
+                                }
+                            } else {
+                                const data = [];
+                                snapshot.forEach(d => data.push({ id: d.id, ...d.data() }));
+                                data.sort((a,b) => a.createdAt - b.createdAt);
+                                setCategories(data);
+                            }
+                        });
+
+                        // Listen to Villages (Kampung)
+                        const qVillages = query(collection(db, 'villages'));
+                        unsubscribeVillages = onSnapshot(qVillages, async (snapshot) => {
+                            if (snapshot.empty) {
+                                for (let i = 0; i < DEFAULT_VILLAGES.length; i++) {
+                                    const vName = DEFAULT_VILLAGES[i];
+                                    await setDoc(doc(db, 'villages', 'v_' + i), {
+                                        name: vName,
+                                        createdAt: Date.now() + i
+                                    });
+                                }
+                            } else {
+                                const data = [];
+                                snapshot.forEach(d => data.push({ id: d.id, ...d.data() }));
+                                data.sort((a,b) => a.name.localeCompare(b.name));
+                                setVillages(data);
+                            }
+                        });
+
+                    } catch (error) {
+                        console.error("Firebase Error:", error);
+                    }
+                };
+
+                const timer = setInterval(() => {
+                    if (window.FirebaseLib) {
+                        clearInterval(timer);
+                        initDb();
+                    }
+                }, 100);
+
+                return () => {
+                    clearInterval(timer);
+                    if (unsubscribeDocs) unsubscribeDocs();
+                    if (unsubscribeCats) unsubscribeCats();
+                    if (unsubscribeVillages) unsubscribeVillages();
+                };
+            }, []);
+
+            const handleDownloadApp = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        showToast('Aplikasi berhasil dipasang di perangkat Anda!');
+                    }
+                    setDeferredPrompt(null);
+                } else {
+                    setShowInstallGuide(true);
+                }
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (!loginName.trim()) return setLoginError('Nama lengkap wajib diisi.');
+                if (loginRole === 'admin' && loginPwd !== 'sidey2026') return setLoginError('Kata sandi admin salah!');
+                
+                setUser({ name: loginName.trim(), role: loginRole });
+                setLoginError('');
+            };
+
+            const handleLogout = () => {
+                setUser(null);
+                setLoginName('');
+                setLoginPwd('');
+                setCurrentView('dashboard');
+                setSelectedKampung(null);
+                setMobileMenuOpen(false);
+            };
+
+            const handleFileSelect = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    setSelectedFile(file);
+                    setUploadFileName(file.name);
+                }
+            };
+
+            const handleUpload = async (e) => {
+                e.preventDefault();
+                
+                if (!selectedFile) {
+                    showToast('Silakan pilih file dokumen terlebih dahulu!', 'error');
+                    return;
+                }
+
+                const maxSizeInBytes = 500 * 1024 * 1024;
+                if (selectedFile.size > maxSizeInBytes) {
+                    showToast('Gagal terupload! Ukuran file melebihi batas 500 MB.', 'error');
+                    return;
+                }
+
+                const form = e.target;
+                const fileSizeMB = (selectedFile.size / (1024 * 1024)).toFixed(2) + ' MB';
+                const fileBlobUrl = URL.createObjectURL(selectedFile);
+
+                const newDoc = {
+                    name: uploadFileName || form.fileName.value,
+                    category: form.category.value,
+                    clientName: form.client.value,
+                    size: fileSizeMB,
+                    status: 'Menunggu',
+                    createdAt: Date.now(),
+                    uploadedBy: user.name,
+                    fileUrl: fileBlobUrl
+                };
+                
+                try {
+                    const { getFirestore, collection, addDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await addDoc(collection(db, 'documents'), newDoc);
+                    setUploadOpen(false);
+                    setSelectedFile(null);
+                    setUploadFileName('');
+                    showToast('Dokumen berhasil diunggah dan disimpan!');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal menyimpan dokumen ke database.', 'error');
+                }
+            };
+
+            const handleVerifyPassword = (e) => {
+                e.preventDefault();
+                if (adminPwdInput === 'sidey2026') {
+                    if (authPrompt.action === 'delete') {
+                        executeDelete(authPrompt.data.id);
+                        if (previewDoc && previewDoc.id === authPrompt.data.id) setPreviewDoc(null);
+                    } else if (authPrompt.action === 'edit') {
+                        setEditDoc(authPrompt.data);
+                    } else if (authPrompt.action === 'deleteCategory') {
+                        executeDeleteCategory(authPrompt.data.id);
+                    } else if (authPrompt.action === 'deleteVillage') {
+                        executeDeleteVillage(authPrompt.data);
+                    }
+                    setAuthPrompt(null);
+                } else {
+                    showToast('Kata sandi Admin salah!', 'error');
+                }
+                setAdminPwdInput('');
+            };
+
+            const executeDeleteVillage = async (village) => {
+                const docCount = docs.filter(d => d.clientName === village.name).length;
+                if (docCount > 0) {
+                    showToast(`Gagal: Masih ada ${docCount} dokumen terkait kampung ${village.name}! Hapus/pindahkan dokumen terlebih dahulu.`, 'error');
+                    return;
+                }
+                try {
+                    const { getFirestore, doc, deleteDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await deleteDoc(doc(db, 'villages', village.id));
+                    if (selectedKampung === village.name) setSelectedKampung(null);
+                    showToast(`Kampung "${village.name}" berhasil dihapus.`);
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal menghapus kampung.', 'error');
+                }
+            };
+
+            const handleAddVillage = async (e) => {
+                e.preventDefault();
+                const vName = e.target.villageName.value.trim();
+                if (!vName) return;
+                
+                if (villages.some(v => v.name.toLowerCase() === vName.toLowerCase())) {
+                    showToast('Nama kampung sudah ada!', 'error');
+                    return;
+                }
+
+                try {
+                    const { getFirestore, collection, addDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await addDoc(collection(db, 'villages'), {
+                        name: vName,
+                        createdAt: Date.now()
+                    });
+                    setAddVillageOpen(false);
+                    showToast(`Kampung "${vName}" berhasil ditambahkan!`);
+                } catch (err) {
+                    showToast('Gagal menambah kampung.', 'error');
+                }
+            };
+
+            const handleUpdateVillage = async (e) => {
+                e.preventDefault();
+                const vName = e.target.villageName.value.trim();
+                if (!vName || !editVillage) return;
+
+                try {
+                    const { getFirestore, doc, updateDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await updateDoc(doc(db, 'villages', editVillage.id), {
+                        name: vName
+                    });
+                    setEditVillage(null);
+                    showToast('Nama kampung berhasil diperbarui!');
+                } catch (err) {
+                    showToast('Gagal memperbarui kampung.', 'error');
+                }
+            };
+
+            const executeDeleteCategory = async (id) => {
+                const docCount = docs.filter(d => d.category === id).length;
+                if (docCount > 0) {
+                    showToast(`Gagal: Folder masih berisi ${docCount} dokumen! Hapus dokumen terlebih dahulu.`, 'error');
+                    return;
+                }
+                try {
+                    const { getFirestore, doc, deleteDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await deleteDoc(doc(db, 'categories', id));
+                    if (currentView === id) setCurrentView('dashboard');
+                    showToast('Folder berhasil dihapus.');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal menghapus folder.', 'error');
+                }
+            };
+
+            const executeDelete = async (id) => {
+                try {
+                    const { getFirestore, doc, deleteDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await deleteDoc(doc(db, 'documents', id));
+                    showToast('Dokumen berhasil dihapus permanen.');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal menghapus dokumen.', 'error');
+                }
+            };
+
+            const handleUpdateDoc = async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                try {
+                    const { getFirestore, doc, updateDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await updateDoc(doc(db, 'documents', editDoc.id), {
+                        name: form.fileName.value,
+                        category: form.category.value,
+                        clientName: form.client.value
+                    });
+                    setEditDoc(null);
+                    showToast('Data dokumen berhasil diperbarui.');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal memperbarui data.', 'error');
+                }
+            };
+
+            const handleAddCategory = async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                try {
+                    const { getFirestore, collection, addDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await addDoc(collection(db, 'categories'), {
+                        name: form.catName.value,
+                        icon: 'ph-folder',
+                        createdAt: Date.now()
+                    });
+                    setAddCategoryOpen(false);
+                    showToast('Folder baru berhasil ditambahkan!');
+                } catch (err) {
+                    showToast('Gagal menambah folder.', 'error');
+                }
+            };
+
+            const handleUpdateCategory = async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                try {
+                    const { getFirestore, doc, updateDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await updateDoc(doc(db, 'categories', editCategory.id), {
+                        name: form.catName.value
+                    });
+                    setEditCategory(null);
+                    showToast('Nama folder berhasil diperbarui!');
+                } catch (err) {
+                    showToast('Gagal memperbarui folder.', 'error');
+                }
+            };
+
+            const handleStatusChange = async (id, newStatus) => {
+                if (user.role !== 'admin') return;
+                try {
+                    const { getFirestore, doc, updateDoc } = window.FirebaseLib;
+                    const db = getFirestore();
+                    await updateDoc(doc(db, 'documents', id), { status: newStatus });
+                    setPreviewDoc(prev => prev && prev.id === id ? {...prev, status: newStatus} : prev);
+                    showToast(`Status dokumen diubah menjadi ${newStatus}.`);
+                } catch (err) {
+                    console.error(err);
+                    showToast('Gagal mengubah status.', 'error');
+                }
+            };
+
+            const filteredDocs = useMemo(() => {
+                let result = docs;
+                if (searchQuery) {
+                    const lowerQ = searchQuery.toLowerCase();
+                    result = result.filter(d => d.name.toLowerCase().includes(lowerQ) || d.clientName.toLowerCase().includes(lowerQ));
+                } else if (currentView !== 'dashboard' && currentView !== 'rekapan') {
+                    result = result.filter(d => d.category === currentView);
+                    if (selectedKampung) {
+                        result = result.filter(d => d.clientName === selectedKampung);
+                    }
+                }
+                return result;
+            }, [docs, currentView, selectedKampung, searchQuery]);
+
+            const stats = {
+                total: docs.length,
+                pending: docs.filter(d => d.status === 'Menunggu').length,
+                approved: docs.filter(d => d.status === 'Disetujui').length,
+            };
+
+            const formatDate = (ts) => new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(ts));
+
+            // Login Screen View
+            if (!user) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-900">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[320px] sm:h-[600px] bg-indigo-600/20 rounded-full blur-[80px] sm:blur-[120px] opacity-50 pointer-events-none"></div>
+                        
+                        <div className="glass-panel p-6 sm:p-10 rounded-3xl w-full max-w-md z-10 animate-slide-up shadow-2xl border border-slate-700/80">
+                            <div className="text-center mb-6 sm:mb-8">
+                                <Logo className="w-36 sm:w-48 h-auto mx-auto mb-4 sm:mb-6 object-contain drop-shadow-xl" />
+                                <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Login Portal</h1>
+                                <p className="text-slate-400 mt-1 sm:mt-2 text-xs sm:text-sm">Pilih peran Anda untuk melanjutkan</p>
+                            </div>
+                            <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+                                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-900/60 rounded-xl border border-slate-800">
+                                    <button type="button" onClick={() => { setLoginRole('umum'); setLoginError(''); }} className={`py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${loginRole === 'umum' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>Umum</button>
+                                    <button type="button" onClick={() => { setLoginRole('admin'); setLoginError(''); }} className={`py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${loginRole === 'admin' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>Admin</button>
+                                </div>
+                                {loginError && <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs sm:text-sm text-center flex items-center justify-center gap-2 animate-fade-in"><i className="ph-fill ph-warning-circle"></i>{loginError}</div>}
+                                <div>
+                                    <label className="block text-[11px] sm:text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Nama Lengkap</label>
+                                    <input type="text" required value={loginName} onChange={e => setLoginName(e.target.value)} placeholder="Masukkan nama..." className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 sm:py-3 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" />
+                                </div>
+                                {loginRole === 'admin' && (
+                                    <div className="animate-fade-in">
+                                        <label className="block text-[11px] sm:text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">Kata Sandi (Khusus Admin)</label>
+                                        <div className="relative">
+                                            <input type={showLoginPwd ? "text" : "password"} required value={loginPwd} onChange={e => setLoginPwd(e.target.value)} placeholder="Masukkan password..." className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-3.5 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all" />
+                                            <button type="button" onClick={() => setShowLoginPwd(!showLoginPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                                                <i className={`ph ${showLoginPwd ? 'ph-eye-slash' : 'ph-eye'} text-lg`}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                <button type="submit" className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-lg shadow-indigo-600/20 flex justify-center items-center gap-2 mt-2">
+                                    Masuk ke Sistem <i className="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </form>
+
+                            <div className="mt-5 pt-4 border-t border-slate-800/80 text-center">
+                                <button 
+                                    onClick={handleDownloadApp}
+                                    className="relative inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-amber-200 hover:text-white rounded-xl bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-purple-500/15 hover:from-amber-500/30 hover:via-indigo-500/30 hover:to-purple-500/30 border border-amber-400/30 hover:border-amber-400/70 shadow-lg shadow-amber-500/5 transition-all duration-300 group hover:scale-[1.02] active:scale-[0.98]"
+                                >
+                                    <div className="w-6 h-6 rounded-lg bg-amber-400/20 flex items-center justify-center text-amber-400 group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
+                                        <i className="ph-bold ph-download-simple text-sm"></i>
+                                    </div>
+                                    <span className="tracking-wide">Download Aplikasi</span>
+                                    <i className="ph-bold ph-caret-right text-xs text-amber-400/70 group-hover:translate-x-0.5 transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        {showInstallGuide && (
+                            <ActionModal title="Download & Instal Aplikasi" onClose={() => setShowInstallGuide(false)}>
+                                <div className="space-y-4 text-xs sm:text-sm text-slate-300">
+                                    <div className="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                                            <i className="ph-bold ph-device-mobile text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-white">Simpan Langsung ke Perangkat</h4>
+                                            <p className="text-slate-400 text-[11px]">Gunakan sebagai aplikasi mandiri di Ponsel atau Laptop Anda.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 pt-2">
+                                        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+                                            <p className="font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
+                                                <i className="ph-bold ph-desktop"></i> Laptop / PC (Chrome, Edge)
+                                            </p>
+                                            <p className="text-slate-300 text-xs">Klik ikon <b className="text-white">Instal / Download</b> di bilah alamat browser (sebelah kanan atas URL) untuk memasang aplikasi di Desktop Anda.</p>
+                                        </div>
+
+                                        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+                                            <p className="font-semibold text-indigo-400 mb-1 flex items-center gap-1.5">
+                                                <i className="ph-bold ph-device-mobile"></i> Android (Chrome)
+                                            </p>
+                                            <p className="text-slate-300 text-xs">Ketuk titik tiga <b className="text-white">⋮</b> di kanan atas browser Chrome, lalu pilih <b className="text-white">"Tambahkan ke Layar Utama"</b> atau <b className="text-white">"Instal Aplikasi"</b>.</p>
+                                        </div>
+
+                                        <div className="p-3 bg-slate-900 rounded-xl border border-slate-700/60">
+                                            <p className="font-semibold text-rose-400 mb-1 flex items-center gap-1.5">
+                                                <i className="ph-bold ph-apple-logo"></i> iPhone / iPad (Safari)
+                                            </p>
+                                            <p className="text-slate-300 text-xs">Ketuk tombol Bagikan <b className="text-white">⎋</b> di bagian bawah browser Safari, lalu gulir ke bawah dan pilih <b className="text-white">"Tambahkan ke Layar Utama"</b>.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-2 flex justify-end">
+                                        <button onClick={() => setShowInstallGuide(false)} className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-xs transition-colors">
+                                            Mengerti
+                                        </button>
+                                    </div>
+                                </div>
+                            </ActionModal>
+                        )}
+                    </div>
+                );
+            }
+
+            // Print View Rendering Mode
+            if (printContext) {
+                return (
+                    <div className="print-container bg-white text-black min-h-screen font-serif p-4 sm:p-8">
+                        <div className="flex flex-col sm:flex-row items-center border-b-[3px] border-black pb-4 sm:pb-6 mb-6 sm:mb-8 text-center sm:text-left">
+                            <Logo className="w-20 sm:w-28 h-auto mb-3 sm:mb-0 sm:mr-6 object-contain" />
+                            <div className="flex-1">
+                                <h1 className="text-lg sm:text-2xl font-bold uppercase tracking-wide">Pemerintah Kabupaten Manokwari</h1>
+                                <h2 className="text-base sm:text-xl font-bold uppercase tracking-wide mt-1">Distrik Sidey</h2>
+                                <p className="text-xs sm:text-sm mt-1 text-gray-700">Jalan Raya Sidey, Kode Pos 98314, Provinsi Papua Barat</p>
+                            </div>
+                        </div>
+
+                        {printContext.type === 'doc' && printContext.data && (
+                            <div className="max-w-3xl mx-auto">
+                                <h3 className="text-base sm:text-lg font-bold text-center underline uppercase mb-6">Tanda Terima Dokumen Resmi</h3>
+                                <table className="w-full text-left mb-8 text-xs sm:text-sm">
+                                    <tbody>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 w-1/3 font-semibold">ID Registrasi</td><td className="py-2.5">#{printContext.data.id.substring(0,8).toUpperCase()}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Nama Dokumen</td><td className="py-2.5">{printContext.data.name}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Desa / Kampung</td><td className="py-2.5 font-bold">{printContext.data.clientName}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Kategori</td><td className="py-2.5">{categories.find(c => c.id === printContext.data.category)?.name || printContext.data.category}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Diunggah Oleh</td><td className="py-2.5">{printContext.data.uploadedBy}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Waktu Unggah</td><td className="py-2.5">{formatDate(printContext.data.createdAt)}</td></tr>
+                                        <tr className="border-b border-gray-300"><td className="py-2.5 font-semibold">Status Validasi</td><td className="py-2.5">{printContext.data.status}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        {printContext.type === 'all' && (
+                            <div className="overflow-x-auto">
+                                <h3 className="text-base sm:text-lg font-bold text-center uppercase mb-6">Rekapitulasi Seluruh Data Dokumen Desa</h3>
+                                <table className="w-full border-collapse border border-black text-xs sm:text-sm text-center">
+                                    <thead>
+                                        <tr className="bg-gray-200">
+                                            <th className="border border-black p-2">Nama Desa</th>
+                                            {categories.map(c => <th key={c.id} className="border border-black p-2">{c.name}</th>)}
+                                            <th className="border border-black p-2">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {villages.map(villageObj => {
+                                            const village = villageObj.name;
+                                            let totalVillage = 0;
+                                            return (
+                                                <tr key={villageObj.id || village}>
+                                                    <td className="border border-black p-2 font-bold text-left pl-3">{village}</td>
+                                                    {categories.map(c => {
+                                                        const count = docs.filter(d => d.clientName === village && d.category === c.id).length;
+                                                        totalVillage += count;
+                                                        return <td key={c.id} className="border border-black p-2">{count}</td>;
+                                                    })}
+                                                    <td className="border border-black p-2 font-bold bg-gray-50">{totalVillage}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                        <tr className="bg-gray-200 font-bold">
+                                            <td className="border border-black p-2 text-right pr-3">TOTAL KESELURUHAN</td>
+                                            {categories.map(c => {
+                                                const count = docs.filter(d => d.category === c.id).length;
+                                                return <td key={c.id} className="border border-black p-2">{count}</td>;
+                                            })}
+                                            <td className="border border-black p-2">{docs.length}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        {printContext.type === 'village' && (
+                            <div className="overflow-x-auto">
+                                <h3 className="text-base sm:text-lg font-bold text-center uppercase mb-6">Rincian Dokumen - Desa {printContext.data}</h3>
+                                <table className="w-full border-collapse border border-black text-xs sm:text-sm">
+                                    <thead>
+                                        <tr className="bg-gray-200 text-left">
+                                            <th className="border border-black p-2 text-center">No</th>
+                                            <th className="border border-black p-2">Kategori</th>
+                                            <th className="border border-black p-2">Nama Dokumen</th>
+                                            <th className="border border-black p-2">Pengunggah</th>
+                                            <th className="border border-black p-2">Tanggal</th>
+                                            <th className="border border-black p-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {docs.filter(d => d.clientName === printContext.data).sort((a,b) => b.createdAt - a.createdAt).map((doc, idx) => (
+                                            <tr key={doc.id}>
+                                                <td className="border border-black p-2 text-center">{idx + 1}</td>
+                                                <td className="border border-black p-2">{categories.find(c => c.id === doc.category)?.name || doc.category}</td>
+                                                <td className="border border-black p-2">{doc.name}</td>
+                                                <td className="border border-black p-2">{doc.uploadedBy}</td>
+                                                <td className="border border-black p-2">{formatDate(doc.createdAt)}</td>
+                                                <td className="border border-black p-2">{doc.status}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+
+                        <div className="mt-12 flex justify-end pr-4 sm:pr-8 text-center text-xs sm:text-sm">
+                            <div>
+                                <p className="mb-14">Distrik Sidey, {new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</p>
+                                <p className="font-bold underline uppercase">{user.name}</p>
+                                <p>{user.role === 'admin' ? 'Verifikator Dokumen' : 'Petugas'}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 flex gap-3 print:hidden z-50">
+                            <button onClick={() => window.print()} className="px-5 py-2.5 bg-indigo-600 text-white rounded-full shadow-lg text-xs sm:text-sm font-semibold flex items-center gap-2 hover:bg-indigo-500 transition-all">
+                                <i className="ph-bold ph-printer"></i> Cetak
+                            </button>
+                            <button onClick={() => setPrintContext(null)} className="px-5 py-2.5 bg-slate-800 text-white rounded-full shadow-lg text-xs sm:text-sm font-semibold flex items-center gap-2 border border-slate-700 hover:bg-slate-700 transition-all">
+                                <i className="ph-bold ph-x"></i> Tutup
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Main Application View
+            return (
+                <div className="min-h-screen flex text-slate-300 relative overflow-x-hidden">
+                    {/* Mobile Sidebar Backdrop Overlay */}
+                    {mobileMenuOpen && (
+                        <div 
+                            onClick={() => setMobileMenuOpen(false)} 
+                            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 md:hidden transition-opacity animate-fade-in"
+                        />
+                    )}
+
+                    {/* Sidebar */}
+                    <div className={`fixed md:static inset-y-0 left-0 w-64 glass-panel border-r border-slate-800 z-50 transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col h-full`}>
+                        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Logo className="h-7 sm:h-8 object-contain" />
+                                <div>
+                                    <h1 className="font-bold text-white leading-tight text-sm">DocuVault</h1>
+                                    <p className="text-[10px] text-indigo-400 font-medium">Enterprise Portal</p>
+                                </div>
+                            </div>
+                            <button className="md:hidden text-slate-400 hover:text-white p-1" onClick={() => setMobileMenuOpen(false)}>
+                                <i className="ph ph-x text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <div className="p-3.5 border-b border-slate-800/50 bg-slate-800/20">
+                            <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-lg flex-shrink-0">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-white text-xs sm:text-sm truncate">{user.name}</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                        {user.role === 'admin' ? <i className="ph-fill ph-shield-check text-amber-400"></i> : <i className="ph-fill ph-user text-indigo-400"></i>}
+                                        {user.role}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-1">
+                            <p className="px-3 text-[10px] sm:text-xs font-semibold text-slate-500 mb-2 mt-1 uppercase tracking-wider">Menu Utama</p>
+                            <button onClick={() => { setCurrentView('dashboard'); setSelectedKampung(null); setSearchQuery(''); setMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-xs sm:text-sm font-medium ${currentView === 'dashboard' ? 'bg-indigo-600/10 text-indigo-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+                                <i className={`text-lg ${currentView === 'dashboard' ? 'ph-fill ph-squares-four' : 'ph ph-squares-four'}`}></i> Dashboard
+                            </button>
+                            
+                            {/* Folder Kategori Section */}
+                            <div className="flex items-center justify-between px-3 mt-5 mb-2">
+                                <p className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">Folder Kategori</p>
+                                {user?.role === 'admin' && (
+                                    <button onClick={() => setAddCategoryOpen(true)} className="px-2 py-1 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white rounded-lg transition-colors text-[11px] font-semibold flex items-center gap-1 shadow-sm" title="Tambah Folder Kategori Baru">
+                                        <i className="ph-bold ph-plus"></i> <span>Tambah Folder</span>
+                                    </button>
+                                )}
+                            </div>
+                            
+                            {categories.map(cat => (
+                                <div key={cat.id} className={`group flex items-center justify-between w-full rounded-xl transition-all ${currentView === cat.id ? 'bg-indigo-600/10 text-indigo-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+                                    <button onClick={() => { setCurrentView(cat.id); setSelectedKampung(null); setSearchQuery(''); setMobileMenuOpen(false); }} className="flex-1 flex items-center gap-3 px-3 py-2.5 text-xs sm:text-sm font-medium text-left truncate">
+                                        <i className={`text-lg ${currentView === cat.id ? `ph-fill ${cat.icon}` : cat.icon}`}></i> <span className="truncate">{cat.name}</span>
+                                    </button>
+                                    {user?.role === 'admin' && (
+                                        <div className="flex sm:hidden group-hover:flex items-center pr-2 gap-1">
+                                            <button onClick={(e) => { e.stopPropagation(); setEditCategory(cat); }} className="p-1.5 text-slate-400 hover:text-amber-400 rounded-md hover:bg-slate-700 transition-colors" title="Edit Nama Folder">
+                                                <i className="ph-bold ph-pencil-simple text-xs"></i>
+                                            </button>
+                                            <button onClick={(e) => { e.stopPropagation(); setAuthPrompt({action:'deleteCategory', data:cat}); }} className="p-1.5 text-slate-400 hover:text-rose-400 rounded-md hover:bg-slate-700 transition-colors" title="Hapus Folder">
+                                                <i className="ph-bold ph-trash text-xs"></i>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {/* Menu Kelola Kampung / Desa */}
+                            <div className="flex items-center justify-between px-3 mt-5 mb-2">
+                                <button onClick={() => setShowVillagesInMenu(!showVillagesInMenu)} className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1 hover:text-slate-300">
+                                    <i className={`ph-bold ${showVillagesInMenu ? 'ph-caret-down' : 'ph-caret-right'}`}></i>
+                                    <span>Daftar Kampung ({villages.length})</span>
+                                </button>
+                                {user?.role === 'admin' && (
+                                    <button onClick={() => setAddVillageOpen(true)} className="px-2 py-1 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white rounded-lg transition-colors text-[11px] font-semibold flex items-center gap-1 shadow-sm" title="Tambah Nama Kampung Baru">
+                                        <i className="ph-bold ph-plus"></i> <span>Tambah Kampung</span>
+                                    </button>
+                                )}
+                            </div>
+
+                            {showVillagesInMenu && (
+                                <div className="space-y-1 pl-2 border-l border-slate-800 ml-3 my-1">
+                                    {villages.map(villageObj => {
+                                        const vName = villageObj.name;
+                                        const isSelected = selectedKampung === vName;
+                                        return (
+                                            <div key={villageObj.id} className={`group flex items-center justify-between w-full rounded-lg transition-all ${isSelected ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-400 hover:bg-slate-800/60 hover:text-white'}`}>
+                                                <button onClick={() => { 
+                                                    if (!categories.some(c => c.id === currentView)) {
+                                                        setCurrentView(categories[0]?.id || 'rkpk_apbk');
+                                                    }
+                                                    setSelectedKampung(vName); 
+                                                    setSearchQuery(''); 
+                                                    setMobileMenuOpen(false); 
+                                                }} className="flex-1 flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-left truncate">
+                                                    <i className={`ph ${isSelected ? 'ph-check-circle text-indigo-400' : 'ph-house-line text-slate-500'}`}></i> 
+                                                    <span className="truncate">{vName}</span>
+                                                </button>
+
+                                                {user?.role === 'admin' && (
+                                                    <div className="flex sm:hidden group-hover:flex items-center pr-1.5 gap-0.5">
+                                                        <button onClick={(e) => { e.stopPropagation(); setEditVillage(villageObj); }} className="p-1 text-slate-400 hover:text-amber-400 rounded hover:bg-slate-700 transition-colors" title={`Edit nama ${vName}`}>
+                                                            <i className="ph-bold ph-pencil-simple text-xs"></i>
+                                                        </button>
+                                                        <button onClick={(e) => { e.stopPropagation(); setAuthPrompt({action:'deleteVillage', data:villageObj}); }} className="p-1 text-slate-400 hover:text-rose-400 rounded hover:bg-slate-700 transition-colors" title={`Hapus kampung ${vName}`}>
+                                                            <i className="ph-bold ph-trash text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
+                            <p className="px-3 text-[10px] sm:text-xs font-semibold text-slate-500 mb-2 mt-5 uppercase tracking-wider">Laporan</p>
+                            <button onClick={() => { setCurrentView('rekapan'); setSelectedKampung(null); setSearchQuery(''); setMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-xs sm:text-sm font-medium ${currentView === 'rekapan' ? 'bg-indigo-600/10 text-indigo-400 font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+                                <i className={`text-lg ${currentView === 'rekapan' ? 'ph-fill ph-chart-bar' : 'ph ph-chart-bar'}`}></i> Rekapan Data Desa
+                            </button>
+                        </div>
+                        
+                        <div className="p-3.5 border-t border-slate-800">
+                            <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 rounded-xl transition-all text-xs sm:text-sm font-medium border border-slate-700 hover:border-rose-500/30">
+                                <i className="ph-bold ph-sign-out"></i> Keluar
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-900 relative w-full">
+                        {/* Header Navigation */}
+                        <div className="h-16 border-b border-slate-800 glass-panel flex items-center justify-between px-3 sm:px-6 z-30 gap-2">
+                            <div className="flex items-center gap-2 sm:gap-4 flex-1">
+                                <button className="md:hidden text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800/80 border border-slate-700" onClick={() => setMobileMenuOpen(true)}>
+                                    <i className="ph-bold ph-list text-xl"></i>
+                                </button>
+                                <div className="relative w-full max-w-[180px] xs:max-w-xs sm:max-w-sm lg:max-w-md">
+                                    <i className="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                                    <input type="text" placeholder="Cari dokumen/desa..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-slate-800 border border-slate-700 rounded-full pl-9 pr-3 py-1.5 text-xs sm:text-sm text-white focus:ring-1 focus:ring-indigo-500 outline-none transition-all" />
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {selectedKampung && (
+                                    <button onClick={() => { setUploadOpen(true); setSelectedFile(null); setUploadFileName(''); }} className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-xs sm:text-sm font-medium flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 transition-all flex-shrink-0">
+                                        <i className="ph-bold ph-upload-simple"></i> <span className="hidden xs:inline">Unggah</span>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Content Scroll View */}
+                        <div className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 custom-scrollbar relative z-10">
+                            {/* Dashboard View */}
+                            {currentView === 'dashboard' && !searchQuery && (
+                                <div className="animate-fade-in space-y-5 sm:space-y-6">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-white">Ringkasan Sistem</h2>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                                        <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 relative overflow-hidden group hover:border-indigo-500/30 transition-colors">
+                                            <div className="flex justify-between items-center relative z-10">
+                                                <div><p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">Total Dokumen</p><h3 className="text-2xl sm:text-3xl font-bold text-white">{stats.total}</h3></div>
+                                                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 flex-shrink-0"><i className="ph-fill ph-files text-xl"></i></div>
+                                            </div>
+                                        </div>
+                                        <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 relative overflow-hidden group hover:border-amber-500/30 transition-colors">
+                                            <div className="flex justify-between items-center relative z-10">
+                                                <div><p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">Menunggu Verifikasi</p><h3 className="text-2xl sm:text-3xl font-bold text-white">{stats.pending}</h3></div>
+                                                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0"><i className="ph-fill ph-clock-counter-clockwise text-xl"></i></div>
+                                            </div>
+                                        </div>
+                                        <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+                                            <div className="flex justify-between items-center relative z-10">
+                                                <div><p className="text-slate-400 text-xs sm:text-sm font-medium mb-1">Disetujui</p><h3 className="text-2xl sm:text-3xl font-bold text-white">{stats.approved}</h3></div>
+                                                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0"><i className="ph-fill ph-check-circle text-xl"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 sm:mt-8">
+                                        <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4">Aktivitas Terakhir</h3>
+                                        <div className="glass-panel rounded-2xl border border-slate-800 overflow-x-auto custom-scrollbar">
+                                            {docs.length === 0 ? (
+                                                <div className="text-center py-10 text-slate-500 text-xs sm:text-sm"><i className="ph ph-empty text-3xl mb-2"></i><p>Belum ada aktivitas dokumen.</p></div>
+                                            ) : (
+                                                <table className="w-full text-left whitespace-nowrap min-w-[500px]">
+                                                    <thead>
+                                                        <tr className="bg-slate-800/50 border-b border-slate-700 text-[11px] sm:text-xs uppercase tracking-wider text-slate-400">
+                                                            <th className="px-4 py-3 sm:px-6 sm:py-4 font-medium">Nama Dokumen</th>
+                                                            <th className="px-4 py-3 sm:px-6 sm:py-4 font-medium">Kategori</th>
+                                                            <th className="px-4 py-3 sm:px-6 sm:py-4 font-medium">Desa</th>
+                                                            <th className="px-4 py-3 sm:px-6 sm:py-4 font-medium">Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-slate-800/50">
+                                                        {docs.slice(0,5).map(doc => (
+                                                            <tr key={doc.id} className="hover:bg-slate-800/20 transition-colors">
+                                                                <td className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm text-slate-200">{doc.name}</td>
+                                                                <td className="px-4 py-3 sm:px-6 sm:py-4 text-[11px] sm:text-xs text-slate-400">{categories.find(c=>c.id===doc.category)?.name || doc.category}</td>
+                                                                <td className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm">{doc.clientName}</td>
+                                                                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${doc.status === 'Disetujui' ? 'bg-emerald-500/10 text-emerald-400' : doc.status === 'Ditolak' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                                                                        <span className={`w-1.5 h-1.5 rounded-full ${doc.status === 'Disetujui' ? 'bg-emerald-400' : doc.status === 'Ditolak' ? 'bg-rose-400' : 'bg-amber-400 animate-pulse'}`}></span>
+                                                                        {doc.status}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Folders Grid View (Villages) */}
+                            {categories.some(c => c.id === currentView) && !selectedKampung && !searchQuery && (
+                                <div className="animate-fade-in">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                                        <div>
+                                            <h2 className="text-xl sm:text-2xl font-bold text-white">{categories.find(c => c.id === currentView)?.name}</h2>
+                                            <p className="text-slate-400 text-xs sm:text-sm mt-0.5">Pilih folder desa untuk melihat atau mengunggah dokumen spesifik.</p>
+                                        </div>
+                                        {user?.role === 'admin' && (
+                                            <button onClick={() => setAddVillageOpen(true)} className="self-start sm:self-auto px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all">
+                                                <i className="ph-bold ph-plus"></i> Tambah Nama Kampung
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
+                                        {villages.map(villageObj => {
+                                            const village = villageObj.name;
+                                            const count = docs.filter(d => d.category === currentView && d.clientName === village).length;
+                                            return (
+                                                <div key={villageObj.id || village} onClick={() => setSelectedKampung(village)} className="glass-panel p-3.5 sm:p-5 rounded-2xl cursor-pointer hover:bg-slate-800 transition-all border border-slate-800 hover:border-indigo-500/50 flex flex-col items-center text-center group relative overflow-hidden shadow-sm hover:shadow-indigo-500/10">
+                                                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-slate-800 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
+                                                        <i className="ph-fill ph-folder text-3xl sm:text-4xl text-indigo-400 drop-shadow-md"></i>
+                                                    </div>
+                                                    <h3 className="font-bold text-slate-200 text-xs sm:text-sm truncate w-full">{village}</h3>
+                                                    <span className="mt-2 inline-block px-2.5 py-0.5 bg-slate-900 rounded-full text-[10px] sm:text-xs font-medium text-slate-400 border border-slate-700">{count} File</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Rekapan View */}
+                            {currentView === 'rekapan' && !searchQuery && (
+                                <div className="animate-fade-in space-y-4">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                        <div>
+                                            <h2 className="text-xl sm:text-2xl font-bold text-white">Rekapan Data Seluruh Desa</h2>
+                                            <p className="text-slate-400 text-xs sm:text-sm mt-0.5">Ringkasan jumlah dokumen di setiap kategori.</p>
+                                        </div>
+                                        <button onClick={() => setPrintContext({ type: 'all' })} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition-all">
+                                            <i className="ph-bold ph-printer text-base"></i> Cetak Seluruh Laporan
+                                        </button>
+                                    </div>
+                                    <div className="glass-panel rounded-2xl border border-slate-800 overflow-x-auto custom-scrollbar">
+                                        <table className="w-full text-left whitespace-nowrap min-w-[600px]">
+                                            <thead>
+                                                <tr className="bg-slate-800/50 border-b border-slate-700 text-[11px] sm:text-xs uppercase tracking-wider text-slate-400">
+                                                    <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold">Nama Desa</th>
+                                                    {categories.map(c => <th key={c.id} className="px-4 py-3 sm:px-6 sm:py-4 font-semibold text-center">{c.name}</th>)}
+                                                    <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold text-center">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-800/50">
+                                                {villages.map(villageObj => {
+                                                    const village = villageObj.name;
+                                                    return (
+                                                        <tr key={villageObj.id || village} className="hover:bg-slate-800/30 transition-colors">
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-medium text-slate-200">{village}</td>
+                                                            {categories.map(c => {
+                                                                const count = docs.filter(d => d.clientName === village && d.category === c.id).length;
+                                                                return <td key={c.id} className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm text-center text-slate-400">{count > 0 ? <span className="text-indigo-400 font-bold">{count}</span> : '-'}</td>;
+                                                            })}
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-center">
+                                                                <button onClick={() => setPrintContext({ type: 'village', data: village })} className="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-xs font-medium inline-flex items-center gap-1 transition-colors">
+                                                                    <i className="ph-bold ph-printer"></i> Cetak
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Table List View (Inside Folder or Search) */}
+                            {(selectedKampung || searchQuery) && currentView !== 'rekapan' && (
+                                <div className="animate-fade-in space-y-4">
+                                    {selectedKampung && !searchQuery && (
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-800/30 p-4 rounded-2xl border border-slate-800">
+                                            <div className="flex items-center gap-3">
+                                                <button onClick={() => setSelectedKampung(null)} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-400 hover:text-white transition-colors border border-slate-700">
+                                                    <i className="ph-bold ph-arrow-left text-base"></i>
+                                                </button>
+                                                <div>
+                                                    <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                                                        <i className="ph-fill ph-folder text-indigo-400"></i> Desa {selectedKampung}
+                                                    </h2>
+                                                    <p className="text-slate-400 text-xs sm:text-sm">Kategori: {categories.find(c=>c.id===currentView)?.name}</p>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => { setUploadOpen(true); setSelectedFile(null); setUploadFileName(''); }} className="self-start sm:self-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition-all">
+                                                <i className="ph-bold ph-upload-simple text-base"></i> Unggah Dokumen Desa Ini
+                                            </button>
+                                        </div>
+                                    )}
+                                    {searchQuery && (
+                                        <h2 className="text-lg sm:text-xl font-bold text-white">Hasil pencarian untuk "{searchQuery}"</h2>
+                                    )}
+
+                                    <div className="glass-panel rounded-2xl border border-slate-800 overflow-x-auto custom-scrollbar shadow-xl">
+                                        {filteredDocs.length === 0 ? (
+                                            <div className="text-center py-12 sm:py-16">
+                                                <i className="ph-fill ph-folder-open text-5xl text-slate-600 mb-3 drop-shadow-md"></i>
+                                                <p className="text-slate-400 text-xs sm:text-sm">Belum ada dokumen di folder ini.</p>
+                                            </div>
+                                        ) : (
+                                            <table className="w-full text-left whitespace-nowrap min-w-[550px]">
+                                                <thead>
+                                                    <tr className="bg-slate-800/80 border-b border-slate-700 text-[11px] sm:text-xs uppercase tracking-wider text-slate-400">
+                                                        <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold">Info Dokumen</th>
+                                                        <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold hidden md:table-cell">Desa</th>
+                                                        <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold">Status</th>
+                                                        <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold hidden lg:table-cell">Tanggal</th>
+                                                        <th className="px-4 py-3 sm:px-6 sm:py-4 font-semibold text-right">Opsi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-800/50">
+                                                    {filteredDocs.map(doc => (
+                                                        <tr key={doc.id} className="hover:bg-slate-800/30 transition-colors group">
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-indigo-400 border border-slate-700 flex-shrink-0">
+                                                                        <i className="ph-fill ph-file-text text-lg"></i>
+                                                                    </div>
+                                                                    <div className="min-w-0 max-w-[160px] xs:max-w-[220px] sm:max-w-xs">
+                                                                        <p className="font-semibold text-xs sm:text-sm text-slate-200 truncate">{doc.name}</p>
+                                                                        <p className="text-[10px] text-slate-500 truncate">{doc.size} • By {doc.uploadedBy}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4 hidden md:table-cell">
+                                                                <span className="text-xs sm:text-sm text-slate-300 font-medium">{doc.clientName}</span>
+                                                            </td>
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4">
+                                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${doc.status === 'Disetujui' ? 'bg-emerald-500/10 text-emerald-400' : doc.status === 'Ditolak' ? 'bg-rose-500/10 text-rose-400' : 'bg-amber-500/10 text-amber-400'}`}>
+                                                                    <span className={`w-1.5 h-1.5 rounded-full ${doc.status === 'Disetujui' ? 'bg-emerald-400' : doc.status === 'Ditolak' ? 'bg-rose-400' : 'bg-amber-400 animate-pulse'}`}></span>
+                                                                    {doc.status}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4 hidden lg:table-cell text-slate-400 text-xs">
+                                                                {formatDate(doc.createdAt)}
+                                                            </td>
+                                                            <td className="px-4 py-3 sm:px-6 sm:py-4 text-right">
+                                                                <div className="flex items-center justify-end gap-1.5">
+                                                                    {user.role === 'admin' && (
+                                                                        <>
+                                                                            <button onClick={() => setAuthPrompt({action:'edit', data:doc})} title="Edit" className="p-1.5 bg-slate-800 hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 rounded-lg transition-colors border border-slate-700">
+                                                                                <i className="ph-bold ph-pencil-simple text-xs sm:text-sm"></i>
+                                                                            </button>
+                                                                            <button onClick={() => setAuthPrompt({action:'delete', data:doc})} title="Hapus" className="p-1.5 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-lg transition-colors border border-slate-700">
+                                                                                <i className="ph-bold ph-trash text-xs sm:text-sm"></i>
+                                                                            </button>
+                                                                        </>
+                                                                    )}
+                                                                    <button onClick={() => setPreviewDoc(doc)} className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-lg text-xs font-semibold transition-colors border border-indigo-500/20">
+                                                                        Detail
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Modals Section */}
+                        {/* Upload Modal */}
+                        {isUploadOpen && (
+                            <ActionModal title="Unggah Dokumen Baru" onClose={() => { setUploadOpen(false); setSelectedFile(null); setUploadFileName(''); }}>
+                                <form onSubmit={handleUpload} className="space-y-4">
+                                    <div onClick={() => document.getElementById('file-upload').click()} className="border-2 border-dashed border-slate-700 rounded-2xl p-6 sm:p-8 text-center bg-slate-900/50 hover:bg-slate-800/50 hover:border-indigo-500/50 transition-colors cursor-pointer group">
+                                        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
+                                            <i className="ph-bold ph-upload-simple text-xl sm:text-2xl text-indigo-400"></i>
+                                        </div>
+                                        {selectedFile ? (
+                                            <div>
+                                                <p className="text-xs sm:text-sm font-bold text-emerald-400 truncate px-2">{selectedFile.name}</p>
+                                                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <p className="text-xs sm:text-sm font-medium text-slate-300">Klik untuk memilih file dokumen</p>
+                                                <p className="text-[10px] sm:text-xs text-slate-500 mt-1">PDF, DOCX, XLSX (Max. 500MB)</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <input type="file" id="file-upload" className="hidden" onChange={handleFileSelect} />
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Nama Dokumen</label>
+                                        <input name="fileName" type="text" required placeholder="Contoh: Laporan RKPK 2026..." value={uploadFileName} onChange={e => setUploadFileName(e.target.value)} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" />
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-400 mb-1">Kategori</label>
+                                            <select name="category" defaultValue={categories.some(c => c.id === currentView) ? currentView : categories[0]?.id} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-400 mb-1">Desa / Kampung</label>
+                                            <select name="client" required defaultValue={selectedKampung || villages[0]?.name} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                {villages.map(v => <option key={v.id || v.name} value={v.name}>{v.name}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700/50 flex justify-end gap-2">
+                                        <button type="button" onClick={() => { setUploadOpen(false); setSelectedFile(null); setUploadFileName(''); }} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white transition-colors">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-1.5">
+                                            <i className="ph-bold ph-floppy-disk"></i> Simpan
+                                        </button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Detail Modal */}
+                        {previewDoc && (
+                            <ActionModal title="Detail Dokumen" onClose={() => setPreviewDoc(null)}>
+                                <div className="space-y-4">
+                                    <div className="p-3.5 bg-slate-900 rounded-xl border border-slate-700 flex items-start gap-3">
+                                        <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0 border border-indigo-500/30">
+                                            <i className="ph-fill ph-file-pdf text-xl text-indigo-400"></i>
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <h4 className="font-bold text-white text-xs sm:text-sm leading-tight truncate">{previewDoc.name}</h4>
+                                            <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5">{previewDoc.size} • {formatDate(previewDoc.createdAt)}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        <div className="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                                            <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Desa</p>
+                                            <p className="text-xs sm:text-sm font-medium text-slate-200 truncate">{previewDoc.clientName}</p>
+                                        </div>
+                                        <div className="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                                            <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Kategori</p>
+                                            <p className="text-xs sm:text-sm font-medium text-slate-200 truncate">{categories.find(c=>c.id===previewDoc.category)?.name || previewDoc.category}</p>
+                                        </div>
+                                        <div className="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                                            <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Pengunggah</p>
+                                            <p className="text-xs sm:text-sm font-medium text-slate-200 truncate">{previewDoc.uploadedBy}</p>
+                                        </div>
+                                        <div className="p-2.5 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                                            <p className="text-[10px] text-slate-500 uppercase font-semibold tracking-wider">Status</p>
+                                            <span className={`inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${previewDoc.status === 'Disetujui' ? 'bg-emerald-500/20 text-emerald-400' : previewDoc.status === 'Ditolak' ? 'bg-rose-500/20 text-rose-400' : 'bg-amber-500/20 text-amber-400'}`}>{previewDoc.status}</span>
+                                        </div>
+                                    </div>
+
+                                    {previewDoc.fileUrl && (
+                                        <div className="pt-2">
+                                            <a href={previewDoc.fileUrl} download={previewDoc.name} target="_blank" rel="noreferrer" className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-indigo-400 hover:text-indigo-300 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors">
+                                                <i className="ph-bold ph-download-simple text-base"></i> Unduh File Dokumen
+                                            </a>
+                                        </div>
+                                    )}
+
+                                    {user.role === 'admin' && previewDoc.status === 'Menunggu' && (
+                                        <div className="flex gap-2 pt-3 border-t border-slate-700">
+                                            <button onClick={() => handleStatusChange(previewDoc.id, 'Disetujui')} className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs font-medium transition-colors flex justify-center items-center gap-1.5">
+                                                <i className="ph-bold ph-check"></i> Setujui
+                                            </button>
+                                            <button onClick={() => handleStatusChange(previewDoc.id, 'Ditolak')} className="flex-1 py-2 bg-rose-500 hover:bg-rose-400 text-white rounded-xl text-xs font-medium transition-colors flex justify-center items-center gap-1.5">
+                                                <i className="ph-bold ph-x"></i> Tolak
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-end gap-2 pt-3 border-t border-slate-700">
+                                        <button onClick={() => {setPrintContext({type: 'doc', data: previewDoc}); setPreviewDoc(null);}} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium rounded-xl flex items-center gap-1.5 transition-colors">
+                                            <i className="ph-bold ph-printer"></i> Cetak Struk
+                                        </button>
+                                    </div>
+                                </div>
+                            </ActionModal>
+                        )}
+
+                        {/* Auth Confirm Modal */}
+                        {authPrompt && (
+                            <ActionModal title="Otorisasi Admin" onClose={() => { setAuthPrompt(null); setAdminPwdInput(''); setShowAdminPwdInput(false); }}>
+                                <form onSubmit={handleVerifyPassword} className="space-y-4">
+                                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-2.5 text-amber-200 text-xs sm:text-sm">
+                                        <i className="ph-fill ph-warning-circle text-lg flex-shrink-0 text-amber-400"></i>
+                                        <p>Konfirmasi aksi <b>{authPrompt.action === 'edit' ? 'Edit' : authPrompt.action === 'deleteCategory' ? 'Hapus Folder' : 'Hapus'}</b>. Masukkan password Admin.</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase">Kata Sandi Admin</label>
+                                        <div className="relative">
+                                            <i className="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                                            <input type={showAdminPwdInput ? "text" : "password"} autoFocus value={adminPwdInput} onChange={e => setAdminPwdInput(e.target.value)} placeholder="Password admin..." className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-9 py-2.5 text-xs sm:text-sm text-white focus:ring-1 focus:ring-indigo-500 outline-none" required />
+                                            <button type="button" onClick={() => setShowAdminPwdInput(!showAdminPwdInput)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                                                <i className={`ph ${showAdminPwdInput ? 'ph-eye-slash' : 'ph-eye'} text-base`}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => { setAuthPrompt(null); setAdminPwdInput(''); setShowAdminPwdInput(false); }} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all">Verifikasi</button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Edit Modal */}
+                        {editDoc && (
+                            <ActionModal title="Edit Data Dokumen" onClose={() => setEditDoc(null)}>
+                                <form onSubmit={handleUpdateDoc} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Nama File Dokumen</label>
+                                        <input name="fileName" type="text" defaultValue={editDoc.name} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" required />
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-400 mb-1">Kategori</label>
+                                            <select name="category" defaultValue={editDoc.category} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-400 mb-1">Desa / Kampung</label>
+                                            <select name="client" required defaultValue={editDoc.clientName} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none">
+                                                {villages.map(v => <option key={v.id || v.name} value={v.name}>{v.name}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => setEditDoc(null)} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all">Simpan</button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Auth Confirm Modal */}
+                        {authPrompt && (
+                            <ActionModal title="Otorisasi Admin" onClose={() => { setAuthPrompt(null); setAdminPwdInput(''); setShowAdminPwdInput(false); }}>
+                                <form onSubmit={handleVerifyPassword} className="space-y-4">
+                                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl flex gap-2.5 text-amber-200 text-xs sm:text-sm">
+                                        <i className="ph-fill ph-warning-circle text-lg flex-shrink-0 text-amber-400"></i>
+                                        <p>Konfirmasi aksi <b>{authPrompt.action === 'edit' ? 'Edit Dokumen' : authPrompt.action === 'deleteCategory' ? 'Hapus Folder' : authPrompt.action === 'deleteVillage' ? `Hapus Kampung (${authPrompt.data.name})` : 'Hapus Dokumen'}</b>. Masukkan password Admin.</p>
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-semibold text-slate-400 mb-1 uppercase">Kata Sandi Admin</label>
+                                        <div className="relative">
+                                            <i className="ph ph-lock-key absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-base"></i>
+                                            <input type={showAdminPwdInput ? "text" : "password"} autoFocus value={adminPwdInput} onChange={e => setAdminPwdInput(e.target.value)} placeholder="Password admin..." className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-9 py-2.5 text-xs sm:text-sm text-white focus:ring-1 focus:ring-indigo-500 outline-none" required />
+                                            <button type="button" onClick={() => setShowAdminPwdInput(!showAdminPwdInput)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                                                <i className={`ph ${showAdminPwdInput ? 'ph-eye-slash' : 'ph-eye'} text-base`}></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => { setAuthPrompt(null); setAdminPwdInput(''); setShowAdminPwdInput(false); }} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all">Verifikasi</button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Add Village Modal */}
+                        {isAddVillageOpen && (
+                            <ActionModal title="Tambah Nama Kampung Baru" onClose={() => setAddVillageOpen(false)}>
+                                <form onSubmit={handleAddVillage} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Nama Kampung / Desa</label>
+                                        <input name="villageName" type="text" placeholder="Contoh: Kampung Sidey Makmur..." className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" required autoFocus />
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => setAddVillageOpen(false)} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                                            <i className="ph-bold ph-plus"></i> Simpan Kampung
+                                        </button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Edit Village Modal */}
+                        {editVillage && (
+                            <ActionModal title="Ubah Nama Kampung" onClose={() => setEditVillage(null)}>
+                                <form onSubmit={handleUpdateVillage} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Nama Kampung</label>
+                                        <input name="villageName" type="text" defaultValue={editVillage.name} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" required autoFocus />
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => setEditVillage(null)} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                                            <i className="ph-bold ph-floppy-disk"></i> Simpan Perubahan
+                                        </button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+
+                        {/* Edit Category Modal */}
+                        {editCategory && (
+                            <ActionModal title="Ubah Nama Folder" onClose={() => setEditCategory(null)}>
+                                <form onSubmit={handleUpdateCategory} className="space-y-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Nama Folder Baru</label>
+                                        <input name="catName" type="text" defaultValue={editCategory.name} className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none" required autoFocus />
+                                    </div>
+                                    <div className="pt-3 border-t border-slate-700 flex justify-end gap-2">
+                                        <button type="button" onClick={() => setEditCategory(null)} className="px-4 py-2 text-xs sm:text-sm font-medium text-slate-400 hover:text-white">Batal</button>
+                                        <button type="submit" className="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-medium rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                                            <i className="ph-bold ph-floppy-disk"></i> Simpan Perubahan
+                                        </button>
+                                    </div>
+                                </form>
+                            </ActionModal>
+                        )}
+                        
+                        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
