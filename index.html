@@ -6,9 +6,6 @@
     <title>SISTEM INFORMASI PELAPORAN DISTRIK SIDEY</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -19,14 +16,9 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         brand: {
-                            sidebar: '#131b2d',
-                            main: '#0b1121',
-                            panel: '#1c2438',
-                            hover: '#1e293b',
-                            active: '#273552',
-                            primary: '#6366f1',
-                            success: '#10b981',
-                            warning: '#f59e0b'
+                            sidebar: '#131b2d', main: '#0b1121', panel: '#1c2438',
+                            hover: '#1e293b', active: '#273552', primary: '#6366f1',
+                            success: '#10b981', warning: '#f59e0b'
                         }
                     },
                     animation: {
@@ -39,10 +31,7 @@
                     keyframes: {
                         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
                         slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-8px)' },
-                        },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-8px)' } },
                         glow: {
                             '0%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.2)' },
                             '100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.8), 0 0 35px rgba(99, 102, 241, 0.5)' },
@@ -52,14 +41,9 @@
             }
         }
     </script>
+    
     <style>
-        body { 
-            background-color: #0b1121; 
-            color: #f8fafc; 
-            overflow: hidden; 
-            -webkit-tap-highlight-color: transparent;
-        }
-        
+        body { background-color: #0b1121; color: #f8fafc; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); border-radius: 10px; }
@@ -67,15 +51,14 @@
 
         @media print {
             body { background-color: white !important; color: black !important; overflow: auto !important; }
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            .print-formal { font-family: 'Times New Roman', Times, serif !important; color: black !important; }
-            .print-formal table { width: 100%; border-collapse: collapse; margin-top: 1rem; border: 2px solid #000; }
+            #dashboard-screen, main, #content-area { height: auto !important; overflow: visible !important; display: block !important; }
+            aside { display: none !important; }
+            .print-formal table { width: 100%; border-collapse: collapse; margin-top: 1rem; border: 2px solid #000; page-break-inside: auto; }
+            .print-formal tr { page-break-inside: avoid; page-break-after: auto; }
+            .print-formal thead { display: table-header-group; }
+            .print-formal tfoot { display: table-footer-group; }
             .print-formal th, .print-formal td { border: 1px solid #000 !important; padding: 8px 6px; text-align: left; font-size: 11px; color: black !important; }
             .print-formal th { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; text-align: center; vertical-align: middle; font-weight: bold; }
-            .print-formal .bg-gray-print { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .print-header-formal { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; border-bottom: 3px double black; padding-bottom: 12px; }
-            .print-logo-formal { width: 85px !important; height: 85px !important; object-fit: contain; }
         }
 
         body.light-mode { background-color: #f1f5f9; color: #0f172a; }
@@ -84,38 +67,168 @@
         .light-mode .bg-brand-panel, .light-mode .bg-\[\#162032\], .light-mode .bg-\[\#1c2438\] { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .light-mode .text-white { color: #0f172a !important; }
         .light-mode .text-slate-200 { color: #1e293b !important; }
-        .light-mode .text-slate-300 { color: #334155 !important; }
         .light-mode .text-slate-400 { color: #64748b !important; }
-        .light-mode .text-slate-500 { color: #94a3b8 !important; }
-        .light-mode .border-slate-700, .light-mode .border-slate-700\/30, .light-mode .border-slate-700\/50, .light-mode .border-slate-800, .light-mode .border-slate-800\/50 { border-color: #cbd5e1 !important; }
-        .light-mode .bg-slate-800, .light-mode .bg-slate-800\/30 { background-color: #f1f5f9 !important; color: #0f172a !important; }
-        .light-mode .hover\:bg-slate-800\/20:hover { background-color: #f1f5f9 !important; }
-        .light-mode .hover\:bg-brand-hover:hover { background-color: #f8fafc !important; color: #0f172a !important; }
-        .light-mode .bg-brand-active { background-color: #e0e7ff !important; color: #4338ca !important; }
-        .light-mode .bg-brand-active span, .light-mode .bg-brand-active i { color: #4338ca !important; }
         .light-mode input, .light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
-        .light-mode input::placeholder { color: #94a3b8 !important; }
-        .light-mode .bg-slate-900\/60, .light-mode .bg-slate-900\/80, .light-mode .bg-slate-900 { background-color: #f8fafc !important; color: #0f172a !important; }
-        
+        .light-mode .bg-brand-active { background-color: #e0e7ff !important; color: #4338ca !important; }
+
         .fast-spinner {
-            border: 4px solid rgba(99, 102, 241, 0.1);
-            border-left-color: #6366f1;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            border: 4px solid rgba(99, 102, 241, 0.1); border-left-color: #6366f1; border-radius: 50%;
+            width: 40px; height: 40px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Utility classes for JS toggles */
+        .hidden { display: none !important; }
+        .custom-scrollbar { overflow-y: auto; }
     </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="flex flex-col items-center justify-center h-screen w-full bg-[#0b1121] z-50">
+        <div class="fast-spinner"></div>
+        <p class="mt-5 text-slate-400 font-medium tracking-wide text-sm">MEMUAT SISTEM & DATABASE...</p>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="hidden min-h-screen bg-brand-main flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-64 md:w-96 h-64 md:h-96 bg-brand-primary/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-64 md:w-96 h-64 md:h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+
+        <div class="mb-8 md:mb-10 flex flex-col items-center z-10 animate-slide-up">
+             <div class="relative mb-4 md:mb-6 animate-float" style="animation-duration: 5s">
+                 <img src="https://i.ibb.co.com/DP0G84Qm/Chat-GPT-Image-Jul-27-2026-05-10-28-PM.png" alt="Logo" class="relative w-32 h-32 md:w-48 md:h-48 object-cover rounded-full border-4 border-brand-primary/50 shadow-2xl animate-glow bg-[#0b1121] p-1 md:p-2" />
+             </div>
+             <h1 class="text-2xl md:text-3xl font-bold text-white tracking-widest text-center">SISTEM INFORMASI PELAPORAN</h1>
+             <p class="text-brand-primary text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mt-2 text-center">DISTRIK SIDEY</p>
+        </div>
+
+        <div class="w-full max-w-[420px] bg-brand-panel border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl z-10 animate-slide-up">
+            <div class="flex bg-[#131b2d] p-1.5 rounded-xl mb-6 border border-slate-700/50">
+                <button id="tab-login-umum" class="flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 bg-emerald-600/90 text-white shadow-md">
+                    <i class="ph-fill ph-users"></i> Umum
+                </button>
+                <button id="tab-login-admin" class="flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800">
+                    <i class="ph-fill ph-shield-star"></i> Administrator
+                </button>
+            </div>
+            
+            <div id="login-error" class="hidden mb-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm text-center font-medium animate-fade-in"></div>
+
+            <form id="login-form" class="space-y-4 md:space-y-5">
+                <div>
+                    <label id="login-label-username" class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nama Lengkap</label>
+                    <div class="relative">
+                        <i class="ph-fill ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg"></i>
+                        <input type="text" id="login-input-username" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary" placeholder="Contoh: Budi Santoso" required />
+                    </div>
+                </div>
+                <div id="login-password-container" class="hidden">
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Password</label>
+                    <div class="relative">
+                        <i class="ph-fill ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg"></i>
+                        <input type="password" id="login-input-password" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary" placeholder="••••••••" />
+                    </div>
+                </div>
+                <button type="submit" id="login-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex justify-center items-center gap-2 mt-2 outline-none">
+                    <span>Masuk</span> <i class="ph-bold ph-sign-in text-lg"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen" class="hidden flex h-[100dvh] w-full">
+        <!-- Mobile Overlay -->
+        <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden no-print"></div>
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-[#131b2d] border-r border-slate-800 flex flex-col z-40 transform transition-transform duration-300 -translate-x-full md:relative md:translate-x-0 no-print">
+            <div class="p-5 md:p-6 flex items-center gap-3 border-b border-slate-800/50">
+                <img src="https://i.ibb.co.com/DP0G84Qm/Chat-GPT-Image-Jul-27-2026-05-10-28-PM.png" alt="Logo" class="w-10 h-10 object-contain rounded-full border border-brand-primary/30 bg-[#0b1121] p-0.5" />
+                <div>
+                    <h1 class="text-white font-bold text-[15px] leading-tight tracking-wide">SIP Distrik Sidey</h1>
+                    <p class="text-brand-primary text-[10px] font-semibold tracking-wide uppercase">Terkoneksi Cloud</p>
+                </div>
+                <button id="btn-close-sidebar" class="ml-auto md:hidden text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-4 py-6 space-y-6 custom-scrollbar">
+                <div>
+                    <p class="px-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
+                    <button data-menu="dashboard" class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors bg-brand-active text-brand-primary font-medium">
+                        <i class="ph-fill ph-squares-four text-lg text-brand-primary"></i> Dashboard
+                    </button>
+                    <button data-menu="rekapan" class="menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mt-1 text-slate-400 hover:text-slate-200 hover:bg-brand-hover">
+                        <i class="ph-fill ph-printer text-lg"></i> Rekapan Laporan
+                    </button>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori Laporan</p>
+                        <button id="btn-add-cat" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1"><i class="ph-bold ph-plus text-[10px]"></i></button>
+                    </div>
+                    <div id="sidebar-categories" class="space-y-0.5">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between px-2 mb-2">
+                        <button id="btn-toggle-kampung" class="flex-1 flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-slate-300">
+                            <span id="kampung-count-label">Daftar Kampung (0)</span> <i id="kampung-toggle-icon" class="ph-bold ph-caret-down"></i>
+                        </button>
+                        <button id="btn-add-vil" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1 ml-1"><i class="ph-bold ph-plus text-[10px]"></i></button>
+                    </div>
+                    <div id="sidebar-villages" class="space-y-0.5">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-800">
+                <button id="btn-logout" class="w-full py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 flex items-center justify-center gap-2 text-sm"><i class="ph ph-sign-out text-lg"></i> Keluar</button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 bg-brand-main relative overflow-hidden print:overflow-visible">
+            <header class="p-4 md:p-6 border-b border-slate-800/50 flex items-center justify-between bg-brand-main/90 backdrop-blur gap-3 no-print">
+                <button id="btn-mobile-menu" class="md:hidden text-slate-300 p-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50">
+                    <i class="ph-bold ph-list text-xl"></i>
+                </button>
+                <div class="relative flex-1 max-w-2xl">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Cari dokumen..." class="w-full bg-[#162032] border border-slate-700/50 rounded-full pl-11 pr-4 py-2 md:py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-refresh" class="w-10 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all" title="Segarkan & Kembali ke Dashboard">
+                        <i class="ph-bold ph-arrows-clockwise text-lg"></i>
+                    </button>
+                    <button id="btn-theme-toggle" class="w-10 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-amber-400"><i id="theme-icon" class="ph-bold ph-sun text-lg"></i></button>
+                </div>
+            </header>
+
+            <div id="content-area" class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar relative print:overflow-visible print:p-0 print:bg-white">
+                <!-- Content injected via JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-brand-panel border border-slate-700/50 rounded-2xl p-6 w-full max-w-md shadow-2xl animate-slide-up relative">
+            <div id="modal-content">
+                <!-- Modal form injected via JS -->
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, setDoc, deleteDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-        // Konfigurasi Firebase dari User
-        const firebaseConfig = {
+        const defaultConfig = {
             apiKey: "AIzaSyAJPS3YlQ7Zbvsim-G6r0xk6aNlTyUMu4A",
             authDomain: "sipdey-69c1d.firebaseapp.com",
             projectId: "sipdey-69c1d",
@@ -125,895 +238,986 @@
             measurementId: "G-7W2X7JXNR4"
         };
 
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultConfig;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : "sipdey-69c1d";
+
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
+        const auth = getAuth(app);
         const storage = getStorage(app);
+        const ADMIN_PASSWORD = 'sidey2026';
 
-        // Export ke global window agar bisa diakses oleh React via Babel
-        window.firebaseDB = db;
-        window.firebaseStorage = storage;
-        window.firebaseAuth = auth;
-        window.fsOps = { collection, addDoc, setDoc, deleteDoc, updateDoc, doc, onSnapshot, ref, uploadBytesResumable, getDownloadURL, deleteObject };
-        
-        // Memastikan auth berjalan terlebih dahulu untuk izin firestore
-        window.firebaseReady = new Promise((resolve) => {
-            signInAnonymously(auth).then(() => {
-                resolve(true);
-            }).catch(error => {
-                console.error("Firebase Auth Error:", error);
-                resolve(false); // Tetap resolve agar UI load (mungkin public access allowed)
-            });
-        });
-    </script>
-</head>
-<body>
-    <div id="root">
-        <div style="display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; background-color:#0b1121;">
-            <div class="fast-spinner"></div>
-            <p style="margin-top: 20px; color:#94a3b8; font-family:'Inter', sans-serif; font-size:14px; font-weight:500; letter-spacing:1px;">MEMUAT SISTEM...</p>
-        </div>
-    </div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        const LOGO_URL = "https://i.ibb.co.com/DP0G84Qm/Chat-GPT-Image-Jul-27-2026-05-10-28-PM.png";
-
+        // Initial Data Configurations
         const INITIAL_CATEGORIES = [
-            { id: 'c1', name: 'RKPK / APBK' },
-            { id: 'c2', name: 'Data Perangkat Kampung' },
-            { id: 'c3', name: 'Data Perangkat Bamuskam' },
-            { id: 'c4', name: 'Pelaporan Dana Desa' },
-            { id: 'c5', name: 'Data Nominatif Kampung' }
+            { name: 'RKPK / APBK' }, { name: 'Data Perangkat Kampung' },
+            { name: 'Data Perangkat Bamuskam' }, { name: 'Pelaporan Dana Desa' },
+            { name: 'Data Nominatif Kampung' }
         ];
 
         const DEFAULT_VILLAGES = [
-            { id: 'v1', name: "Kaironi" }, { id: 'v2', name: "Kasi" }, { id: 'v3', name: "Manggupi" },
-            { id: 'v4', name: "Meyof 1" }, { id: 'v5', name: "Saray" }, { id: 'v6', name: "Sidey" },
-            { id: 'v7', name: "Sidey Baru" }, { id: 'v8', name: "Sidey Jaya" }, { id: 'v9', name: "Sidey Makmur" },
-            { id: 'v10', name: "Waramui" }, { id: 'v11', name: "Wariki" }, { id: 'v12', name: "Womnowi" }
+            { name: "Kaironi" }, { name: "Kasi" }, { name: "Manggupi" },
+            { name: "Meyof 1" }, { name: "Saray" }, { name: "Sidey" },
+            { name: "Sidey Baru" }, { name: "Sidey Jaya" }, { name: "Sidey Makmur" },
+            { name: "Waramui" }, { name: "Wariki" }, { name: "Womnowi" }
         ];
 
-        const LoginScreen = ({ onLogin }) => {
-            const [isLoading, setIsLoading] = useState(false);
-            const [isDownloading, setIsDownloading] = useState(false);
-            const [loginMode, setLoginMode] = useState('umum');
-            const [username, setUsername] = useState('');
-            const [password, setPassword] = useState('');
-            const [error, setError] = useState('');
-
-            useEffect(() => {
-                setUsername(''); setPassword(''); setError('');
-            }, [loginMode]);
-
-            const handleLogin = (e) => {
-                e.preventDefault();
-                setError('');
-                setIsLoading(true);
-
-                setTimeout(() => {
-                    if (loginMode === 'admin') {
-                        if (username.trim() !== '' && password === 'sidey2026') {
-                            onLogin('admin', username);
-                        } else if (username.trim() === '') {
-                            setError('Username wajib diisi!');
-                            setIsLoading(false);
-                        } else {
-                            setError('Password Admin salah!');
-                            setIsLoading(false);
-                        }
-                    } else {
-                        if (username.trim() !== '') {
-                            onLogin('umum', username);
-                        } else {
-                            setError('Nama Lengkap wajib diisi!');
-                            setIsLoading(false);
-                        }
-                    }
-                }, 800);
-            };
-
-            const handleDownloadApp = () => {
-                setIsDownloading(true);
-                setTimeout(() => {
-                    const fileContent = "Aplikasi Sistem Informasi Pelaporan Distrik Sidey\nVersi: 1.0.0\n\nFile APK simulasi aplikasi Sistem Pelaporan Distrik Sidey.";
-                    const blob = new Blob([fileContent], { type: 'application/vnd.android.package-archive' });
-                    const downloadUrl = URL.createObjectURL(blob);
-                    
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = 'SIP_Sidey_v1.0.0.apk';
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(downloadUrl);
-                    setIsDownloading(false);
-                }, 1200);
-            };
-
-            return (
-                <div className="min-h-screen bg-brand-main flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                    <div className="absolute top-[-10%] left-[-10%] w-64 md:w-96 h-64 md:h-96 bg-brand-primary/20 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-[-10%] right-[-10%] w-64 md:w-96 h-64 md:h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-
-                    <div className="mb-8 md:mb-10 flex flex-col items-center z-10 animate-slide-up">
-                         <div className="relative mb-4 md:mb-6 animate-float" style={{ animationDuration: '5s' }}>
-                             <div className="absolute inset-0 bg-brand-primary/40 rounded-full blur-2xl animate-pulse-fast"></div>
-                             <img 
-                                 src={LOGO_URL} 
-                                 alt="Logo" 
-                                 className="relative w-32 h-32 md:w-48 md:h-48 object-cover rounded-full border-4 border-brand-primary/50 shadow-2xl animate-glow bg-[#0b1121] p-1 md:p-2"
-                             />
-                         </div>
-                         <h1 className="text-2xl md:text-3xl font-bold text-white tracking-widest text-center">SISTEM INFORMASI PELAPORAN</h1>
-                         <p className="text-brand-primary text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mt-2 text-center">DISTRIK SIDEY</p>
-                    </div>
-
-                    <div className="w-full max-w-[420px] bg-brand-panel border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                        <div className="flex bg-[#131b2d] p-1.5 rounded-xl mb-6 border border-slate-700/50 relative z-10">
-                            <button
-                                type="button"
-                                onClick={() => setLoginMode('umum')}
-                                className={`flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${loginMode === 'umum' ? 'bg-emerald-600/90 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                            >
-                                <i className="ph-fill ph-users"></i> Umum
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setLoginMode('admin')}
-                                className={`flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 ${loginMode === 'admin' ? 'bg-purple-600/90 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
-                            >
-                                <i className="ph-fill ph-shield-star"></i> Administrator
-                            </button>
-                        </div>
-                        
-                        {error && (
-                            <div className="mb-6 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm text-center font-medium animate-fade-in">
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleLogin} className="space-y-4 md:space-y-5">
-                            <div className="animate-fade-in">
-                                <label className="block text-xs font-medium text-slate-400 mb-1.5 md:mb-2 uppercase tracking-wider">
-                                    {loginMode === 'admin' ? 'Username' : 'Nama Lengkap'}
-                                </label>
-                                <div className="relative">
-                                    <i className="ph-fill ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg"></i>
-                                    <input 
-                                        type="text" 
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl pl-11 md:pl-12 pr-4 py-3 md:py-3.5 text-sm text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-slate-600" 
-                                        placeholder={loginMode === 'admin' ? "Masukkan username" : "Contoh: Budi Santoso"} 
-                                        required 
-                                    />
-                                </div>
-                            </div>
-
-                            {loginMode === 'admin' && (
-                                <div className="animate-fade-in">
-                                    <label className="block text-xs font-medium text-slate-400 mb-1.5 md:mb-2 uppercase tracking-wider">Password</label>
-                                    <div className="relative">
-                                        <i className="ph-fill ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg"></i>
-                                        <input 
-                                            type="password" 
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl pl-11 md:pl-12 pr-4 py-3 md:py-3.5 text-sm text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-slate-600" 
-                                            placeholder="••••••••" 
-                                            required={loginMode === 'admin'} 
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                            
-                            <button 
-                                type="submit" 
-                                disabled={isLoading}
-                                className={`w-full ${loginMode === 'admin' ? 'bg-purple-600 hover:bg-purple-500 shadow-purple-600/20' : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-600/20'} text-white font-bold rounded-xl py-3 md:py-3.5 transition-all shadow-lg flex justify-center items-center gap-2 mt-2 md:mt-4 outline-none ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
-                            >
-                                {isLoading ? (
-                                    <><i className="ph ph-spinner-gap animate-spin text-xl"></i> Memproses...</>
-                                ) : (
-                                    <>Masuk <i className="ph-bold ph-sign-in text-lg"></i></>
-                                )}
-                            </button>
-
-                            <button 
-                                type="button" 
-                                onClick={handleDownloadApp}
-                                disabled={isDownloading}
-                                className={`w-full bg-[#1e293b] hover:bg-brand-primary text-slate-300 hover:text-white font-semibold rounded-xl py-2.5 md:py-3 transition-all shadow-md flex justify-center items-center gap-2 mt-2 border border-slate-700 focus:outline-none ${isDownloading ? 'opacity-80 cursor-wait' : ''}`}
-                            >
-                                {isDownloading ? (
-                                    <><i className="ph ph-spinner-gap animate-spin text-lg"></i> Menyiapkan File...</>
-                                ) : (
-                                    <>Unduh Aplikasi <i className="ph-bold ph-download-simple text-lg"></i></>
-                                )}
-                            </button>
-                        </form>
-                    </div>
-
-                    <div className="absolute bottom-4 text-center z-10 w-full px-4 animate-fade-in">
-                         <p className="text-slate-500 text-[10px] md:text-xs font-medium">
-                             &copy; {new Date().getFullYear()} Sistem Informasi Pelaporan Distrik Sidey.<br className="md:hidden" /> Hak Cipta Dilindungi.
-                         </p>
-                    </div>
-                </div>
-            );
+        // Application State
+        const state = {
+            userRole: null,
+            loginMode: 'umum',
+            activeMenu: 'dashboard',
+            categories: [],
+            villages: [],
+            docs: [],
+            searchTerm: '',
+            isKampungExpanded: true,
+            isLightMode: false,
+            modalConfig: { type: null, data: null },
+            isUploading: false
         };
 
-        const DashboardApp = ({ onLogout, userRole, userName }) => {
-            const [activeMenu, setActiveMenu] = useState('dashboard');
-            const [isKampungExpanded, setIsKampungExpanded] = useState(true);
-            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-            const [isFirebaseLoading, setIsFirebaseLoading] = useState(true);
+        // Utility: Escape HTML to prevent basic issues
+        const escapeHTML = (str) => {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        };
+
+        // DOM Elements
+        const els = {
+            loading: document.getElementById('loading-screen'),
+            login: document.getElementById('login-screen'),
+            dashboard: document.getElementById('dashboard-screen'),
             
-            const [uploadCat, setUploadCat] = useState('');
-            const [uploadVillage, setUploadVillage] = useState('');
-            const [uploadError, setUploadError] = useState('');
-            const [uploadProgress, setUploadProgress] = useState(0);
-            const [isUploading, setIsUploading] = useState(false);
+            // Login
+            tabUmum: document.getElementById('tab-login-umum'),
+            tabAdmin: document.getElementById('tab-login-admin'),
+            loginError: document.getElementById('login-error'),
+            loginForm: document.getElementById('login-form'),
+            loginLabelUser: document.getElementById('login-label-username'),
+            loginInputUser: document.getElementById('login-input-username'),
+            loginPassContainer: document.getElementById('login-password-container'),
+            loginInputPass: document.getElementById('login-input-password'),
+            loginSubmitBtn: document.getElementById('login-submit-btn'),
 
-            const [actionPassword, setActionPassword] = useState('');
-            const [actionError, setActionError] = useState('');
-            const [editDocName, setEditDocName] = useState('');
+            // Sidebar & Main
+            sidebar: document.getElementById('sidebar'),
+            mobileOverlay: document.getElementById('mobile-overlay'),
+            btnCloseSidebar: document.getElementById('btn-close-sidebar'),
+            btnMobileMenu: document.getElementById('btn-mobile-menu'),
+            sidebarCats: document.getElementById('sidebar-categories'),
+            sidebarVils: document.getElementById('sidebar-villages'),
+            btnToggleKampung: document.getElementById('btn-toggle-kampung'),
+            kampungToggleIcon: document.getElementById('kampung-toggle-icon'),
+            kampungCountLabel: document.getElementById('kampung-count-label'),
+            btnAddCat: document.getElementById('btn-add-cat'),
+            btnAddVil: document.getElementById('btn-add-vil'),
+            btnLogout: document.getElementById('btn-logout'),
+
+            // Content
+            contentArea: document.getElementById('content-area'),
+            searchInput: document.getElementById('search-input'),
+            btnRefresh: document.getElementById('btn-refresh'),
+            btnThemeToggle: document.getElementById('btn-theme-toggle'),
+            themeIcon: document.getElementById('theme-icon'),
+
+            // Modal
+            modalContainer: document.getElementById('modal-container'),
+            modalContent: document.getElementById('modal-content')
+        };
+
+        // Init Auth & Start Listeners
+        async function initApp() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                console.warn("Auth error (melanjutkan tanpa auth):", e);
+                // Tetap lanjut meskipun auth gagal agar UI tetap terbuka
+            }
             
-            const [categories, setCategories] = useState(INITIAL_CATEGORIES);
-            const [docs, setDocs] = useState([]);
-            const [villages, setVillages] = useState(DEFAULT_VILLAGES);
-
-            const [searchTerm, setSearchTerm] = useState('');
-            const [rekapanSearch, setRekapanSearch] = useState('');
-            const [modalConfig, setModalConfig] = useState({ type: null, data: null });
-            const [printMode, setPrintMode] = useState(null);
-            const [catInput, setCatInput] = useState('');
-            const [isLightMode, setIsLightMode] = useState(false);
+            try {
+                setupFirebaseListeners();
+            } catch (e) {
+                console.error("Listener error:", e);
+            }
             
-            const ADMIN_PASSWORD = 'sidey2026';
+            els.loading.classList.add('hidden');
+            els.login.classList.remove('hidden');
+            els.login.classList.add('flex');
+        }
 
-            const [districtInfo, setDistrictInfo] = useState({
-                headName: 'NAMA KEPALA DISTRIK',
-                headNip: '19700101 200001 1 001',
-                address: 'Jalan Raya Sidey, Kode Pos 98314, Provinsi Papua Barat',
-                logoUrl: LOGO_URL
-            });
-            const [villageInput, setVillageInput] = useState('');
-            const [settingsInput, setSettingsInput] = useState(districtInfo);
-
-            useEffect(() => {
-                if (isLightMode) { document.body.classList.add('light-mode'); } 
-                else { document.body.classList.remove('light-mode'); }
-            }, [isLightMode]);
-
-            useEffect(() => {
-                if (!window.firebaseReady) return;
-
-                window.firebaseReady.then((success) => {
-                    if(!success) {
-                        setDocs([]); setIsFirebaseLoading(false); return;
-                    }
-                    
-                    const { db, fsOps } = window;
-                    
-                    // Listener realtime untuk Dokumen
-                    const docsRef = fsOps.collection(db, 'sipdey_docs');
-                    const unsubscribeDocs = fsOps.onSnapshot(docsRef, (snapshot) => {
-                        const loadedDocs = snapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data()
-                        }));
-                        setDocs(loadedDocs.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)));
-                        setIsFirebaseLoading(false);
-                    }, (err) => {
-                        console.error("Gagal memuat dokumen", err);
-                        setIsFirebaseLoading(false);
-                    });
-
-                    // Listener realtime untuk Kategori
-                    const catRef = fsOps.collection(db, 'sipdey_categories');
-                    const unsubscribeCat = fsOps.onSnapshot(catRef, (snapshot) => {
-                        if (!snapshot.empty) {
-                            const loadedCats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            setCategories(loadedCats);
-                        } else {
-                            // Inisialisasi awal ke Firebase jika kosong
-                            INITIAL_CATEGORIES.forEach(cat => fsOps.setDoc(fsOps.doc(db, 'sipdey_categories', cat.id), cat));
-                        }
-                    });
-
-                    // Listener realtime untuk Desa
-                    const vilRef = fsOps.collection(db, 'sipdey_villages');
-                    const unsubscribeVil = fsOps.onSnapshot(vilRef, (snapshot) => {
-                        if (!snapshot.empty) {
-                            const loadedVils = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            setVillages(loadedVils);
-                        } else {
-                            DEFAULT_VILLAGES.forEach(v => fsOps.setDoc(fsOps.doc(db, 'sipdey_villages', v.id), v));
-                        }
-                    });
-
-                    return () => {
-                        unsubscribeDocs();
-                        unsubscribeCat();
-                        unsubscribeVil();
-                    };
-                });
-            }, []);
-
-            useEffect(() => {
-                const handleResize = () => { if(window.innerWidth > 768) setIsMobileMenuOpen(false); };
-                window.addEventListener('resize', handleResize);
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
-            
-            const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-            const triggerPrint = (mode, data = null) => {
-                setPrintMode({ type: mode, data });
-                setTimeout(() => window.print(), 500); 
-            };
-
-            const handleDownload = async (doc) => {
-                if (!doc.fileUrl) return;
-                
-                // Jika dari firebase storage, kita bisa fetch blobbnya atau langsung buka di tab baru
-                try {
-                    const response = await fetch(doc.fileUrl);
-                    const blob = await response.blob();
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = doc.name;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } catch (e) {
-                    // Fallback jika diblokir CORS browser
-                    window.open(doc.fileUrl, '_blank');
+        function setupFirebaseListeners() {
+            // Categories
+            const catRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+            onSnapshot(catRef, (snapshot) => {
+                if (snapshot.empty) {
+                    INITIAL_CATEGORIES.forEach(c => addDoc(catRef, c).catch(console.warn));
+                } else {
+                    state.categories = [];
+                    snapshot.forEach(doc => state.categories.push({ id: doc.id, ...doc.data() }));
+                    state.categories.sort((a, b) => a.name.localeCompare(b.name));
+                    if (state.userRole) { renderSidebar(); renderContent(); }
                 }
-            };
-
-            const handleSaveCategory = async (e) => {
-                e.preventDefault();
-                if (modalConfig.type === 'edit' && actionPassword !== ADMIN_PASSWORD) {
-                    setActionError('Password konfirmasi salah!'); return;
-                }
-                if (!catInput.trim() && modalConfig.type !== 'delete') return;
-
-                const { db, fsOps } = window;
-                if (modalConfig.type === 'add') {
-                    const newId = 'c' + (new Date().getTime());
-                    await fsOps.setDoc(fsOps.doc(db, 'sipdey_categories', newId), { id: newId, name: catInput });
-                } else if (modalConfig.type === 'edit') {
-                    await fsOps.updateDoc(fsOps.doc(db, 'sipdey_categories', modalConfig.data.id), { name: catInput });
-                }
-                setModalConfig({ type: null, data: null }); setCatInput(''); setActionPassword(''); setActionError('');
-            };
-
-            const handleDeleteCategory = async (e) => {
-                e.preventDefault();
-                if (actionPassword !== ADMIN_PASSWORD) { setActionError('Password konfirmasi salah!'); return; }
-                const { db, fsOps } = window;
-                await fsOps.deleteDoc(fsOps.doc(db, 'sipdey_categories', modalConfig.data.id));
-                if (activeMenu.startsWith(modalConfig.data.id)) { setActiveMenu('dashboard'); }
-                setModalConfig({ type: null, data: null }); setActionPassword(''); setActionError('');
-            };
-
-            const handleAddVillage = async (e) => {
-                e.preventDefault();
-                if (!villageInput.trim()) return;
-                const newId = 'v' + new Date().getTime();
-                const { db, fsOps } = window;
-                await fsOps.setDoc(fsOps.doc(db, 'sipdey_villages', newId), { id: newId, name: villageInput });
-                setModalConfig({ type: null, data: null });
-                setVillageInput('');
-            };
-
-            const handleSaveDocument = async (e) => {
-                e.preventDefault();
-                if (actionPassword !== ADMIN_PASSWORD) { setActionError('Password konfirmasi salah!'); return; }
-                if (!editDocName.trim()) return;
-                const { db, fsOps } = window;
-                await fsOps.updateDoc(fsOps.doc(db, 'sipdey_docs', modalConfig.data.id), { name: editDocName });
-                setModalConfig({ type: null, data: null }); setActionPassword(''); setActionError('');
-            };
-
-            const handleDeleteDocument = async (e) => {
-                e.preventDefault();
-                if (actionPassword !== ADMIN_PASSWORD) { setActionError('Password konfirmasi salah!'); return; }
-                
-                const { db, fsOps, firebaseStorage } = window;
-                
-                try {
-                    // Hapus dari Storage Firebase jika ada storagePath
-                    if (modalConfig.data.storagePath) {
-                        const fileRef = fsOps.ref(firebaseStorage, modalConfig.data.storagePath);
-                        await fsOps.deleteObject(fileRef).catch(e => console.log("File tidak ditemukan di storage, hapus doc saja"));
-                    }
-                    // Hapus dari Firestore
-                    await fsOps.deleteDoc(fsOps.doc(db, 'sipdey_docs', modalConfig.data.id));
-                    setModalConfig({ type: null, data: null }); setActionPassword(''); setActionError('');
-                } catch (err) {
-                    setActionError('Gagal menghapus dokumen.');
-                    console.error(err);
-                }
-            };
-
-            const handleFileChange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 524288000) {
-                        setUploadError('Ukuran file melebihi batas maksimal 500 MB!');
-                        e.target.value = null;
-                    } else { setUploadError(''); }
-                }
-            };
-
-            const handleUploadSubmit = async (e) => {
-                e.preventDefault();
-                if (uploadError || isUploading) return;
-                
-                const fileInput = e.target.querySelector('input[type="file"]');
-                const file = fileInput.files[0];
-                if (!file || !uploadCat || !uploadVillage) return;
-
-                setIsUploading(true);
-                const { db, fsOps, firebaseStorage } = window;
-                
-                try {
-                    // Upload ke Firebase Storage
-                    const storagePath = `sipdey_files/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-                    const storageRef = fsOps.ref(firebaseStorage, storagePath);
-                    const uploadTask = fsOps.uploadBytesResumable(storageRef, file);
-
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            setUploadProgress(progress);
-                        },
-                        (error) => {
-                            setUploadError('Gagal mengunggah ke cloud.');
-                            setIsUploading(false);
-                        },
-                        async () => {
-                            // Ambil URL dan simpan ke Firestore
-                            const downloadURL = await fsOps.getDownloadURL(uploadTask.snapshot.ref);
-                            const newDoc = {
-                                name: file.name,
-                                categoryId: uploadCat,
-                                villageId: uploadVillage,
-                                size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-                                status: userRole === 'admin' ? 'DISETUJUI' : 'MENUNGGU',
-                                fileUrl: downloadURL,
-                                fileType: file.type,
-                                storagePath: storagePath,
-                                createdAt: Date.now()
-                            };
-                            
-                            await fsOps.addDoc(fsOps.collection(db, 'sipdey_docs'), newDoc);
-                            
-                            setIsUploading(false);
-                            setUploadProgress(0);
-                            setModalConfig({ type: null, data: null });
-                            setUploadCat(''); setUploadVillage('');
-                            setActiveMenu(`${uploadCat}-${uploadVillage}`);
-                        }
-                    );
-                } catch (err) {
-                    setUploadError('Gagal inisiasi upload cloud.');
-                    setIsUploading(false);
-                }
-            };
-
-            const handleRefresh = () => {
-                setActiveMenu('dashboard');
-                setSearchTerm(''); setRekapanSearch('');
-            };
-            
-            const handleVerify = async (docObj) => {
-                if(userRole !== 'admin') return;
-                const { db, fsOps } = window;
-                await fsOps.updateDoc(fsOps.doc(db, 'sipdey_docs', docObj.id), { status: 'DISETUJUI' });
-            };
-
-            const filteredDocs = docs.filter(doc => {
-                const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
-                if (activeMenu === 'dashboard') return matchesSearch;
-                if (activeMenu === 'rekapan') return false; 
-                if (activeMenu.includes('-')) {
-                    const [cat, vil] = activeMenu.split('-');
-                    return matchesSearch && doc.categoryId === cat && doc.villageId === vil;
-                }
-                if (activeMenu.startsWith('c')) return matchesSearch && doc.categoryId === activeMenu;
-                if (activeMenu.startsWith('v')) return matchesSearch && doc.villageId === activeMenu;
-                return matchesSearch;
+            }, (error) => {
+                console.warn("Firestore categories error, menggunakan data default:", error);
+                state.categories = INITIAL_CATEGORIES.map((c, i) => ({id: 'cat'+i, ...c}));
+                if (state.userRole) { renderSidebar(); renderContent(); }
             });
 
-            const Sidebar = () => (
-                <>
-                    {isMobileMenuOpen && (
-                        <div 
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden transition-opacity"
-                            onClick={closeMobileMenu}
-                        ></div>
-                    )}
-                    
-                    <aside className={`fixed inset-y-0 left-0 w-72 bg-[#131b2d] border-r border-slate-800 flex flex-col z-40 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                        <div className="p-5 md:p-6 flex items-center gap-3">
-                            <img src={LOGO_URL} alt="Logo" className="w-10 h-10 object-contain rounded-full border border-brand-primary/30" />
-                            <div>
-                                <h1 className="text-white font-bold text-[15px] leading-tight tracking-wide">SIP Distrik Sidey</h1>
-                                <p className="text-brand-primary text-[10px] font-semibold tracking-wide uppercase">Cloud Storage Aktif</p>
-                            </div>
-                            <button className="ml-auto md:hidden text-slate-400 hover:text-white" onClick={closeMobileMenu}>
-                                <i className="ph-bold ph-x text-xl"></i>
-                            </button>
+            // Villages
+            const vilRef = collection(db, 'artifacts', appId, 'public', 'data', 'villages');
+            onSnapshot(vilRef, (snapshot) => {
+                if (snapshot.empty) {
+                    DEFAULT_VILLAGES.forEach(v => addDoc(vilRef, v).catch(console.warn));
+                } else {
+                    state.villages = [];
+                    snapshot.forEach(doc => state.villages.push({ id: doc.id, ...doc.data() }));
+                    state.villages.sort((a, b) => a.name.localeCompare(b.name));
+                    if (state.userRole) { renderSidebar(); renderContent(); }
+                }
+            }, (error) => {
+                console.warn("Firestore villages error, menggunakan data default:", error);
+                state.villages = DEFAULT_VILLAGES.map((v, i) => ({id: 'vil'+i, ...v}));
+                if (state.userRole) { renderSidebar(); renderContent(); }
+            });
+
+            // Documents
+            const docsRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
+            onSnapshot(docsRef, (snapshot) => {
+                state.docs = [];
+                snapshot.forEach(doc => state.docs.push({ id: doc.id, ...doc.data() }));
+                state.docs.reverse(); // Newest first
+                if (state.userRole) {
+                    renderSidebar(); // Update sidebar counts
+                    renderContent(); // Update main content
+                }
+            }, (error) => {
+                console.warn("Firestore docs error:", error);
+                if (state.userRole) {
+                    renderSidebar();
+                    renderContent();
+                }
+            });
+        }
+
+        // Event Listeners: Login
+        els.tabUmum.addEventListener('click', () => switchLoginMode('umum'));
+        els.tabAdmin.addEventListener('click', () => switchLoginMode('admin'));
+
+        function switchLoginMode(mode) {
+            state.loginMode = mode;
+            els.loginError.classList.add('hidden');
+            els.loginInputUser.value = '';
+            els.loginInputPass.value = '';
+            
+            if (mode === 'umum') {
+                els.tabUmum.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 bg-emerald-600/90 text-white shadow-md';
+                els.tabAdmin.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800';
+                els.loginLabelUser.innerText = 'Nama Lengkap';
+                els.loginInputUser.placeholder = 'Contoh: Budi Santoso';
+                els.loginPassContainer.classList.add('hidden');
+                els.loginInputPass.removeAttribute('required');
+                els.loginSubmitBtn.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex justify-center items-center gap-2 mt-2 outline-none';
+            } else {
+                els.tabAdmin.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 bg-purple-600/90 text-white shadow-md';
+                els.tabUmum.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800';
+                els.loginLabelUser.innerText = 'Username';
+                els.loginInputUser.placeholder = 'Masukkan username';
+                els.loginPassContainer.classList.remove('hidden');
+                els.loginInputPass.setAttribute('required', 'true');
+                els.loginSubmitBtn.className = 'w-full bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex justify-center items-center gap-2 mt-2 outline-none';
+            }
+        }
+
+        els.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            els.loginError.classList.add('hidden');
+            const username = els.loginInputUser.value.trim();
+            const password = els.loginInputPass.value;
+
+            // Simulate loading
+            els.loginSubmitBtn.innerHTML = `<i class="ph ph-spinner-gap animate-spin text-xl"></i> Memproses...`;
+            els.loginSubmitBtn.disabled = true;
+
+            setTimeout(() => {
+                els.loginSubmitBtn.disabled = false;
+                els.loginSubmitBtn.innerHTML = `<span>Masuk</span> <i class="ph-bold ph-sign-in text-lg"></i>`;
+                
+                if (state.loginMode === 'admin') {
+                    if (username !== '' && password === ADMIN_PASSWORD) {
+                        doLogin('admin');
+                    } else {
+                        showLoginError('Username atau Password Admin salah!');
+                    }
+                } else {
+                    if (username !== '') {
+                        doLogin('umum');
+                    } else {
+                        showLoginError('Nama Lengkap wajib diisi!');
+                    }
+                }
+            }, 800);
+        });
+
+        function showLoginError(msg) {
+            els.loginError.innerText = msg;
+            els.loginError.classList.remove('hidden');
+        }
+
+        function doLogin(role) {
+            state.userRole = role;
+            els.login.classList.add('hidden');
+            els.login.classList.remove('flex');
+            els.dashboard.classList.remove('hidden');
+            
+            if (role === 'admin') {
+                els.btnAddCat.classList.remove('hidden');
+                els.btnAddVil.classList.remove('hidden');
+            } else {
+                els.btnAddCat.classList.add('hidden');
+                els.btnAddVil.classList.add('hidden');
+            }
+            
+            renderSidebar();
+            renderContent();
+        }
+
+        // Event Listeners: General UI
+        els.btnLogout.addEventListener('click', () => {
+            state.userRole = null;
+            els.dashboard.classList.add('hidden');
+            els.login.classList.remove('hidden');
+            els.login.classList.add('flex');
+            els.loginInputUser.value = '';
+            els.loginInputPass.value = '';
+        });
+
+        const toggleMobileMenu = () => {
+            els.sidebar.classList.toggle('-translate-x-full');
+            els.mobileOverlay.classList.toggle('hidden');
+        };
+        els.btnMobileMenu.addEventListener('click', toggleMobileMenu);
+        els.btnCloseSidebar.addEventListener('click', toggleMobileMenu);
+        els.mobileOverlay.addEventListener('click', toggleMobileMenu);
+
+        els.btnRefresh.addEventListener('click', () => {
+            // Efek putar saat diklik
+            const icon = els.btnRefresh.querySelector('i');
+            icon.classList.add('animate-spin');
+            setTimeout(() => icon.classList.remove('animate-spin'), 500);
+
+            // Reset ke tampilan Dashboard dan bersihkan pencarian
+            state.activeMenu = 'dashboard';
+            state.searchTerm = '';
+            els.searchInput.value = '';
+            
+            renderSidebar();
+            renderContent();
+        });
+
+        els.btnThemeToggle.addEventListener('click', () => {
+            state.isLightMode = !state.isLightMode;
+            if (state.isLightMode) {
+                document.body.classList.add('light-mode');
+                els.themeIcon.className = 'ph-bold ph-moon text-lg';
+            } else {
+                document.body.classList.remove('light-mode');
+                els.themeIcon.className = 'ph-bold ph-sun text-lg';
+            }
+        });
+
+        els.btnToggleKampung.addEventListener('click', () => {
+            state.isKampungExpanded = !state.isKampungExpanded;
+            els.kampungToggleIcon.className = state.isKampungExpanded ? 'ph-bold ph-caret-down' : 'ph-bold ph-caret-right';
+            renderSidebar();
+        });
+
+        els.searchInput.addEventListener('input', (e) => {
+            state.searchTerm = e.target.value;
+            renderContent();
+        });
+
+        // Event Listeners: Dynamic Actions via Event Delegation
+        document.addEventListener('click', (e) => {
+            // Sidebar Menu Clicks
+            const menuBtn = e.target.closest('.menu-btn');
+            if (menuBtn) {
+                state.activeMenu = menuBtn.getAttribute('data-menu');
+                if (!els.sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                    toggleMobileMenu(); // Auto close on mobile
+                }
+                renderSidebar();
+                renderContent();
+                return;
+            }
+
+            // Folder Grid Clicks
+            const folderCard = e.target.closest('.folder-card');
+            if (folderCard) {
+                state.activeMenu = folderCard.getAttribute('data-menu');
+                renderSidebar();
+                renderContent();
+                return;
+            }
+
+            // Action Buttons
+            if (e.target.closest('#btn-add-cat')) openModal('add_cat');
+            if (e.target.closest('#btn-add-vil')) openModal('add_village');
+            if (e.target.closest('#btn-upload')) openModal('upload');
+            if (e.target.closest('.btn-close-modal')) closeModal();
+
+            // Print Rekapan Action
+            const printBtn = e.target.closest('#btn-print-rekapan');
+            if (printBtn) {
+                e.preventDefault();
+                const originalContent = printBtn.innerHTML;
+                printBtn.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i> Menyiapkan...`;
+                printBtn.disabled = true;
+                
+                setTimeout(() => {
+                    printBtn.innerHTML = originalContent;
+                    printBtn.disabled = false;
+                    window.print();
+                }, 600); // Beri sedikit jeda agar UI sempat merender sebelum dialog print muncul
+            }
+
+            // Admin Item Actions (Edit/Delete Category)
+            const editCatBtn = e.target.closest('.btn-edit-cat');
+            if (editCatBtn) { e.stopPropagation(); openModal('edit_cat', { id: editCatBtn.dataset.id, name: editCatBtn.dataset.name }); }
+            
+            const delCatBtn = e.target.closest('.btn-delete-cat');
+            if (delCatBtn) { e.stopPropagation(); openModal('delete_cat', { id: delCatBtn.dataset.id, name: delCatBtn.dataset.name }); }
+
+            // Document Actions
+            const previewDoc = e.target.closest('.btn-preview-doc');
+            if (previewDoc) {
+                const docData = state.docs.find(d => d.id === previewDoc.dataset.id);
+                openModal('preview_doc', docData);
+            }
+            const editDoc = e.target.closest('.btn-edit-doc');
+            if (editDoc) {
+                const docData = state.docs.find(d => d.id === editDoc.dataset.id);
+                openModal('edit_doc', docData);
+            }
+            const approveDoc = e.target.closest('.btn-approve-doc');
+            if (approveDoc) {
+                const docData = state.docs.find(d => d.id === approveDoc.dataset.id);
+                openModal('approve_doc', docData);
+            }
+            const delDoc = e.target.closest('.btn-delete-doc');
+            if (delDoc) {
+                const docData = state.docs.find(d => d.id === delDoc.dataset.id);
+                openModal('delete_doc', docData);
+            }
+        });
+
+        function renderSidebar() {
+            // Update Active States for static buttons
+            document.querySelectorAll('.menu-btn[data-menu="dashboard"], .menu-btn[data-menu="rekapan"]').forEach(btn => {
+                const menu = btn.getAttribute('data-menu');
+                if (state.activeMenu === menu) {
+                    btn.className = `menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors bg-brand-active text-brand-primary font-medium`;
+                    btn.querySelector('i').classList.add('text-brand-primary');
+                } else {
+                    btn.className = `menu-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors mt-1 text-slate-400 hover:text-slate-200 hover:bg-brand-hover`;
+                    btn.querySelector('i').classList.remove('text-brand-primary');
+                }
+            });
+
+            // Render Categories
+            let catHTML = '';
+            state.categories.forEach(cat => {
+                const isActive = state.activeMenu === 'c_' + cat.id || state.activeMenu.startsWith(`cv_${cat.id}_`);
+                const activeClass = isActive ? 'bg-brand-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-brand-hover';
+                
+                let adminActions = '';
+                if (state.userRole === 'admin') {
+                    adminActions = `
+                        <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-[#1e293b] p-1 rounded shadow-lg">
+                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-edit-cat text-slate-400 hover:text-brand-primary p-0.5"><i class="ph-fill ph-pencil-simple text-xs"></i></button>
+                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-delete-cat text-slate-400 hover:text-rose-400 p-0.5"><i class="ph-fill ph-trash text-xs"></i></button>
                         </div>
+                    `;
+                }
 
-                        <div className="px-4 md:px-6 mb-4 md:mb-6">
-                            <div className="flex items-center gap-3 bg-brand-panel p-3 rounded-xl border border-slate-700/50">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-inner uppercase ${userRole === 'admin' ? 'bg-purple-600' : 'bg-emerald-600'}`}>
-                                    {userRole === 'admin' ? 'A' : 'U'}
+                catHTML += `
+                    <div class="relative group">
+                        <button data-menu="c_${cat.id}" class="menu-btn w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${activeClass}">
+                            <span class="truncate text-left pr-10">${escapeHTML(cat.name)}</span>
+                        </button>
+                        ${adminActions}
+                    </div>
+                `;
+            });
+            els.sidebarCats.innerHTML = catHTML;
+
+            // Render Villages
+            els.kampungCountLabel.innerText = `Daftar Kampung (${state.villages.length})`;
+            let vilHTML = '';
+            if (state.isKampungExpanded) {
+                state.villages.forEach(village => {
+                    const isActive = state.activeMenu === 'v_' + village.id;
+                    const activeClass = isActive ? 'bg-brand-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-brand-hover';
+                    vilHTML += `
+                        <button data-menu="v_${village.id}" class="menu-btn w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${activeClass}">
+                            <i class="ph ph-house text-lg opacity-70"></i> <span class="truncate">${escapeHTML(village.name)}</span>
+                        </button>
+                    `;
+                });
+            }
+            els.sidebarVils.innerHTML = vilHTML;
+        }
+
+        function renderContent() {
+            const term = state.searchTerm.toLowerCase();
+            let filteredDocs = state.docs.filter(doc => doc.name.toLowerCase().includes(term));
+            
+            if (state.activeMenu.startsWith('cv_')) {
+                const parts = state.activeMenu.split('_');
+                filteredDocs = filteredDocs.filter(d => d.categoryId === parts[1] && d.villageId === parts[2]);
+            } else if (state.activeMenu.startsWith('c_')) {
+                const catId = state.activeMenu.substring(2);
+                filteredDocs = filteredDocs.filter(d => d.categoryId === catId);
+            } else if (state.activeMenu.startsWith('v_')) {
+                const vilId = state.activeMenu.substring(2);
+                filteredDocs = filteredDocs.filter(d => d.villageId === vilId);
+            }
+
+            if (state.activeMenu === 'dashboard') {
+                els.contentArea.innerHTML = getDashboardHTML();
+            } else if (state.activeMenu === 'rekapan') {
+                els.contentArea.innerHTML = getRekapanHTML();
+            } else {
+                els.contentArea.innerHTML = getHeaderContentHTML() + 
+                    ((state.activeMenu.startsWith('c_') && !state.activeMenu.startsWith('cv_')) ? getFolderGridHTML() : getDocTableHTML(filteredDocs));
+            }
+        }
+
+        function getMainTitle() {
+            if (state.activeMenu.startsWith('c_')) {
+                const catId = state.activeMenu.substring(2);
+                return state.categories.find(c => c.id === catId)?.name || 'Kategori';
+            }
+            if (state.activeMenu.startsWith('v_')) {
+                const vilId = state.activeMenu.substring(2);
+                return state.villages.find(v => v.id === vilId)?.name || 'Desa';
+            }
+            if (state.activeMenu.startsWith('cv_')) {
+                const parts = state.activeMenu.split('_');
+                const catName = state.categories.find(c => c.id === parts[1])?.name || '';
+                const vilName = state.villages.find(v => v.id === parts[2])?.name || '';
+                return `${catName} - ${vilName}`;
+            }
+            return 'Dokumen';
+        }
+
+        function getDashboardHTML() {
+            const approvedCount = state.docs.filter(d => d.status === 'DISETUJUI').length;
+            const pendingCount = state.docs.filter(d => d.status !== 'DISETUJUI').length;
+            
+            let recentDocsHTML = '';
+            const recentDocs = state.docs.slice(0, 5);
+            if (recentDocs.length > 0) {
+                recentDocsHTML = recentDocs.map(doc => `
+                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20">
+                        <td class="py-4 pl-6 text-sm text-slate-200 font-medium">
+                            <div class="flex items-center gap-3"><i class="ph-fill ph-file-pdf text-xl text-rose-400"></i><span class="truncate max-w-[200px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</span></div>
+                        </td>
+                        <td class="py-4 text-sm text-slate-400">${escapeHTML(state.villages.find(v => v.id === doc.villageId)?.name || '-')}</td>
+                        <td class="py-4 text-sm text-slate-400">${escapeHTML(state.categories.find(c => c.id === doc.categoryId)?.name || '-')}</td>
+                        <td class="py-4 text-sm">
+                            <span class="px-2 py-1 text-[10px] font-bold rounded-full border ${doc.status === 'DISETUJUI' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}">
+                                ${doc.status || 'MENUNGGU'}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                recentDocsHTML = `<tr><td colSpan="4" class="py-8 text-center text-sm text-slate-500">Belum ada dokumen yang diunggah ke server.</td></tr>`;
+            }
+
+            return `
+                <div class="max-w-6xl animate-fade-in mx-auto">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Selamat Datang!</h2>
+                            <p class="text-slate-400 text-sm mt-1">Sistem Terintegrasi Penyimpanan Dokumen Distrik Sidey</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl group-hover:bg-brand-primary/20 transition-all"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-slate-400 font-medium text-sm">Total Dokumen</h3>
+                                <div class="w-10 h-10 rounded-xl bg-brand-primary/20 text-brand-primary flex items-center justify-center"><i class="ph-fill ph-file-text text-xl"></i></div>
+                            </div>
+                            <div class="text-3xl font-bold text-white">${state.docs.length}</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-slate-400 font-medium text-sm">Disetujui</h3>
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center"><i class="ph-fill ph-check-circle text-xl"></i></div>
+                            </div>
+                            <div class="text-3xl font-bold text-white">${approvedCount}</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-slate-400 font-medium text-sm">Menunggu Review</h3>
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center"><i class="ph-fill ph-clock-counter-clockwise text-xl"></i></div>
+                            </div>
+                            <div class="text-3xl font-bold text-white">${pendingCount}</div>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-4">Dokumen Terbaru</h3>
+                    <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr class="border-b border-slate-700 bg-slate-800/30">
+                                        <th class="py-4 pl-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Dokumen</th>
+                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kampung</th>
+                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori</th>
+                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${recentDocsHTML}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getRekapanHTML() {
+            let theadHTML = state.categories.map(cat => `<th class="py-3 px-2 border border-slate-700/50 print:border-black text-[10px] sm:text-xs font-bold text-slate-400 print:text-black uppercase text-center">${escapeHTML(cat.name)}</th>`).join('');
+            
+            let tbodyHTML = '';
+            state.villages.forEach((village, index) => {
+                let rowTotal = 0;
+                let colsHTML = state.categories.map(cat => {
+                    const count = state.docs.filter(d => d.villageId === village.id && d.categoryId === cat.id).length;
+                    rowTotal += count;
+                    const content = count > 0 ? `<span class="inline-flex w-6 h-6 items-center justify-center bg-emerald-500/10 text-emerald-400 print:bg-transparent print:text-black font-bold rounded-full">${count}</span>` : `<span class="text-slate-600 print:text-gray-400">-</span>`;
+                    return `<td class="py-3 px-2 border-r border-slate-700/50 print:border-black text-sm text-center">${content}</td>`;
+                }).join('');
+
+                tbodyHTML += `
+                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 print:border-black">
+                        <td class="py-3 px-4 border-r border-slate-700/50 print:border-black text-sm text-slate-400 print:text-black text-center">${index + 1}</td>
+                        <td class="py-3 px-4 border-r border-slate-700/50 print:border-black text-sm text-slate-200 print:text-black font-medium">${escapeHTML(village.name)}</td>
+                        ${colsHTML}
+                        <td class="py-3 px-4 text-sm font-bold text-center text-white print:text-black">${rowTotal}</td>
+                    </tr>
+                `;
+            });
+
+            let tfootHTML = state.categories.map(cat => {
+                const colTotal = state.docs.filter(d => d.categoryId === cat.id).length;
+                return `<td class="py-4 px-2 border-r border-slate-700/50 print:border-black text-sm font-bold text-brand-primary print:text-black text-center">${colTotal}</td>`;
+            }).join('');
+
+            const printButtonHTML = state.userRole === 'admin' ? `
+                <button id="btn-print-rekapan" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-transform hover:-translate-y-0.5">
+                    <i class="ph-bold ph-printer text-lg"></i> Cetak Rekapan
+                </button>
+            ` : '';
+
+            return `
+                <div class="max-w-6xl animate-fade-in mx-auto print:max-w-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 no-print">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-white">Rekapan Laporan Distrik</h2>
+                            <p class="text-slate-400 text-sm mt-1">Matriks ketersediaan dokumen berdasarkan Kampung.</p>
+                        </div>
+                        ${printButtonHTML}
+                    </div>
+                    <div class="hidden print-only text-center mb-6 print-formal">
+                        <h2 style="font-size: 18px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">REKAPAN DOKUMEN SISTEM INFORMASI PELAPORAN DISTRIK SIDEY</h2>
+                        <p style="font-size: 12px; margin-bottom: 15px;">Dicetak pada: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm print:border-none print:shadow-none print:rounded-none">
+                        <div class="overflow-x-auto w-full print:overflow-visible">
+                            <table class="w-full text-left border-collapse min-w-[800px] print:min-w-full print-formal">
+                                <thead>
+                                    <tr class="bg-slate-800/50 print:bg-gray-200">
+                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-slate-400 print:text-black uppercase text-center w-12">No</th>
+                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-slate-400 print:text-black uppercase">Nama Kampung</th>
+                                        ${theadHTML}
+                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-emerald-400 print:text-black uppercase text-center w-20">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${tbodyHTML}</tbody>
+                                <tfoot>
+                                    <tr class="bg-slate-800/80 print:bg-gray-200 border-t-2 border-slate-600 print:border-black">
+                                        <td colSpan="2" class="py-4 px-4 border-r border-slate-700/50 print:border-black text-sm font-bold text-slate-200 print:text-black text-right uppercase">Total Dokumen</td>
+                                        ${tfootHTML}
+                                        <td class="py-4 px-4 text-sm font-bold text-emerald-400 print:text-black text-center">${state.docs.length}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            <div class="hidden print-only mt-12 w-full">
+                                <table class="w-full border-none print-formal" style="border: none !important">
+                                    <tbody>
+                                        <tr>
+                                            <td class="w-1/2 text-center border-none" style="border: none !important">
+                                                <p class="mb-20">Mengetahui,<br/>Kepala Distrik Sidey</p>
+                                                <p class="font-bold underline mb-1">......................................................</p>
+                                                <p>NIP. ...............................................</p>
+                                            </td>
+                                            <td class="w-1/2 text-center border-none" style="border: none !important">
+                                                <p class="mb-20">Sidey, ${new Date().toLocaleDateString('id-ID')}<br/>Admin Sistem Terpadu</p>
+                                                <p class="font-bold underline">......................................................</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getHeaderContentHTML() {
+            return `
+                <div class="max-w-6xl animate-fade-in mx-auto">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+                        <h2 class="text-2xl font-bold text-white">${escapeHTML(getMainTitle())}</h2>
+                        <button id="btn-upload" class="px-4 py-2 bg-brand-primary hover:bg-indigo-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
+                            <i class="ph-bold ph-upload-simple text-lg"></i> Unggah File Fisik
+                        </button>
+                    </div>
+            `;
+        }
+
+        function getFolderGridHTML() {
+            const currentCatId = state.activeMenu.substring(2);
+            let gridHTML = state.villages.map(village => {
+                const fileCount = state.docs.filter(d => d.categoryId === currentCatId && d.villageId === village.id).length;
+                return `
+                    <div data-menu="cv_${currentCatId}_${village.id}" class="folder-card bg-[#1c2438] border border-slate-700/30 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-800/80 shadow-sm group transition-transform hover:-translate-y-1">
+                        <i class="ph-fill ph-folder text-5xl text-[#818cf8] mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h3 class="text-white font-bold text-[15px] mb-2 text-center">${escapeHTML(village.name)}</h3>
+                        <div class="bg-[#131b2d] border border-slate-700/50 px-3 py-1 rounded-full text-xs text-slate-400 font-medium">${fileCount} File Fisik</div>
+                    </div>
+                `;
+            }).join('');
+            
+            return `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">${gridHTML}</div></div>`; // closes max-w-6xl
+        }
+
+        function getDocTableHTML(filteredDocs) {
+            let trs = '';
+            if (filteredDocs.length > 0) {
+                trs = filteredDocs.map(doc => {
+                    let adminBtns = '';
+                    if (state.userRole === 'admin') {
+                        let approveBtn = doc.status !== 'DISETUJUI' ? `<button data-id="${doc.id}" class="btn-approve-doc p-1.5 rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white" title="Setujui Dokumen"><i class="ph-bold ph-check text-base"></i></button>` : '';
+                        adminBtns = `
+                            <button data-id="${doc.id}" class="btn-edit-doc p-1.5 rounded bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white" title="Edit Nama Dokumen"><i class="ph-bold ph-pencil-simple text-base"></i></button>
+                            ${approveBtn}
+                            <button data-id="${doc.id}" class="btn-delete-doc p-1.5 rounded bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white" title="Hapus Permanen"><i class="ph-bold ph-trash text-base"></i></button>
+                        `;
+                    }
+                    return `
+                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 group">
+                            <td class="py-4 pl-6 text-sm text-slate-200 font-medium">
+                                <div class="flex items-center gap-3"><i class="ph-fill ph-file-pdf text-xl text-rose-400"></i><span class="truncate max-w-[250px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</span></div>
+                            </td>
+                            <td class="py-4 text-sm text-slate-400">${escapeHTML(state.categories.find(c => c.id === doc.categoryId)?.name || '-')}</td>
+                            <td class="py-4 pr-4 text-sm text-slate-400">${escapeHTML(doc.size)}</td>
+                            <td class="py-4 text-sm">
+                                <span class="px-2 py-1 text-[10px] font-bold rounded-full border ${doc.status === 'DISETUJUI' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}">${doc.status || 'MENUNGGU'}</span>
+                            </td>
+                            <td class="py-4 pr-6 text-right">
+                                <div class="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                    <button data-id="${doc.id}" class="btn-preview-doc p-1.5 rounded bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white" title="Unduh File Asli"><i class="ph-bold ph-download-simple text-base"></i></button>
+                                    ${adminBtns}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                trs = `<tr><td colSpan="5" class="py-12 text-center text-slate-400 text-sm">Tidak ada dokumen di folder ini pada server.</td></tr>`;
+            }
+
+            return `
+                <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm mt-4">
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="border-b border-slate-700 bg-slate-800/30">
+                                    <th class="py-4 pl-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Dokumen (Server)</th>
+                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori Laporan</th>
+                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Ukuran</th>
+                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th class="py-4 pr-6 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                    </div>
+                </div></div> <!-- closes max-w-6xl -->
+            `;
+        }
+
+        function openModal(type, data = null) {
+            state.modalConfig = { type, data };
+            els.modalContainer.classList.remove('hidden');
+            let content = '';
+
+            // Generate HTML based on Modal Type
+            if (type === 'upload') {
+                let catOpts = state.categories.map(c => `<option value="${c.id}">${escapeHTML(c.name)}</option>`).join('');
+                let vilOpts = state.villages.map(v => `<option value="${v.id}">${escapeHTML(v.name)}</option>`).join('');
+                
+                content = `
+                    <form id="form-upload">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0"><i class="ph-bold ph-cloud-arrow-up text-xl"></i></div>
+                            <div><h3 class="text-lg font-bold text-white">Unggah ke Server (Cloud)</h3><p class="text-xs text-slate-400">File akan disimpan permanen.</p></div>
+                        </div>
+                        <div id="upload-error-box" class="hidden mb-4 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex gap-2"><i class="ph-fill ph-warning-circle"></i> <span id="upload-error-msg"></span></div>
+                        <div class="space-y-4 mb-6">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih File Fisik (PDF, Excel, dll)</label>
+                                <input type="file" id="input-file" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2 text-sm text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-primary/20 file:text-brand-primary cursor-pointer" required />
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Kategori</label>
+                                    <select id="input-cat" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-3 py-2.5 text-sm text-white focus:border-brand-primary outline-none"><option value="">-- Pilih --</option>${catOpts}</select>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-white leading-tight">{userName}</p>
-                                    <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1 uppercase tracking-wider mt-0.5">
-                                        <i className="ph-fill ph-user text-slate-500"></i> {userRole === 'admin' ? 'Admin' : 'Staff'}
-                                    </p>
+                                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Desa</label>
+                                    <select id="input-vil" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-3 py-2.5 text-sm text-white focus:border-brand-primary outline-none"><option value="">-- Pilih --</option>${vilOpts}</select>
                                 </div>
+                            </div>
+                            <div id="upload-progress-container" class="hidden w-full bg-slate-800 rounded-full h-2.5 mt-4">
+                                <div id="upload-progress-bar" class="bg-brand-primary h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                <p id="upload-progress-text" class="text-[10px] text-slate-400 mt-1 text-right">Mengunggah: 0%</p>
                             </div>
                         </div>
-
-                        <div className="flex-1 overflow-y-auto px-4 space-y-6 custom-scrollbar pb-4">
-                            <div>
-                                <p className="px-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Menu Utama</p>
-                                <button 
-                                    onClick={() => { setActiveMenu('dashboard'); closeMobileMenu(); }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${activeMenu === 'dashboard' ? 'bg-brand-active text-brand-primary font-medium' : 'text-slate-400 hover:text-slate-200 hover:bg-brand-hover'}`}
-                                >
-                                    <i className={`ph-fill ph-squares-four text-lg ${activeMenu === 'dashboard' ? 'text-brand-primary' : ''}`}></i>
-                                    Dashboard
-                                </button>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between px-2 mb-2">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Folder Kategori</p>
-                                    {userRole === 'admin' && (
-                                        <button 
-                                            onClick={() => { setCatInput(''); setModalConfig({ type: 'add', data: null }); }}
-                                            className="text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-brand-primary rounded p-1"
-                                        >
-                                            <i className="ph-bold ph-plus text-[10px]"></i>
-                                        </button>
-                                    )}
-                                </div>
-                                <div className="space-y-0.5">
-                                    {categories.map(cat => (
-                                        <div key={cat.id} className="relative group">
-                                            <button 
-                                                onClick={() => { setActiveMenu(cat.id); closeMobileMenu(); }}
-                                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${activeMenu === cat.id || activeMenu.startsWith(cat.id + '-') ? 'bg-brand-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-brand-hover'}`}
-                                            >
-                                                <span className="truncate text-left pr-10">{cat.name}</span>
-                                            </button>
-                                            
-                                            {userRole === 'admin' && (
-                                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-[#1e293b] p-1 rounded border border-slate-700 shadow-lg">
-                                                    <button onClick={(e) => { e.stopPropagation(); setCatInput(cat.name); setActionPassword(''); setActionError(''); setModalConfig({ type: 'edit', data: cat }); }} className="text-slate-400 hover:text-brand-primary p-1 md:p-0.5 rounded">
-                                                        <i className="ph-fill ph-pencil-simple text-sm md:text-xs"></i>
-                                                    </button>
-                                                    <button onClick={(e) => { e.stopPropagation(); setActionPassword(''); setActionError(''); setModalConfig({ type: 'delete', data: cat }); }} className="text-slate-400 hover:text-rose-400 p-1 md:p-0.5 rounded">
-                                                        <i className="ph-fill ph-trash text-sm md:text-xs"></i>
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div className="flex items-center justify-between px-2 mb-2">
-                                    <button onClick={() => setIsKampungExpanded(!isKampungExpanded)} className="flex-1 flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-slate-300 text-left">
-                                        <span>Daftar Kampung ({villages.length})</span>
-                                        <i className={`ph-bold ${isKampungExpanded ? 'ph-caret-down' : 'ph-caret-right'} mr-2`}></i>
-                                    </button>
-                                    {userRole === 'admin' && (
-                                        <button 
-                                            onClick={() => { setVillageInput(''); setModalConfig({ type: 'add_village', data: null }); }}
-                                            className="text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-brand-primary rounded p-1 ml-1"
-                                        >
-                                            <i className="ph-bold ph-plus text-[10px]"></i>
-                                        </button>
-                                    )}
-                                </div>
-                                {isKampungExpanded && (
-                                    <div className="space-y-0.5">
-                                        {villages.map(village => (
-                                            <button 
-                                                key={village.id}
-                                                onClick={() => { setActiveMenu(village.id); closeMobileMenu(); }}
-                                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${activeMenu === village.id ? 'bg-brand-active text-white' : 'text-slate-400 hover:text-slate-200 hover:bg-brand-hover'}`}
-                                            >
-                                                <i className="ph ph-house text-lg opacity-70"></i>
-                                                <span className="truncate">{village.name}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                        <div class="flex gap-3">
+                            <button type="button" class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Batal</button>
+                            <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 rounded-xl bg-brand-primary hover:bg-indigo-500 text-white text-sm font-medium shadow-lg flex justify-center items-center gap-2">Unggah File</button>
                         </div>
-
-                        <div className="p-4 mt-auto border-t border-slate-800">
-                            <button onClick={onLogout} className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors text-sm font-medium">
-                                <i className="ph ph-sign-out text-lg"></i> Keluar
-                            </button>
+                    </form>
+                `;
+            } else if (type === 'preview_doc') {
+                content = `
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center mx-auto mb-4"><i class="ph-fill ph-file-pdf text-3xl"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-1 truncate px-4">${escapeHTML(data.name)}</h3>
+                        <p class="text-sm text-slate-400 mb-6">${escapeHTML(data.size)} • Disimpan di Server Cloud</p>
+                        <div class="flex gap-3">
+                            <button class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Tutup</button>
+                            <a href="${data.fileUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 rounded-xl bg-brand-primary hover:bg-indigo-500 text-white text-sm font-medium shadow-lg flex items-center justify-center gap-2"><i class="ph-bold ph-download-simple"></i> Unduh Asli</a>
                         </div>
-                    </aside>
-                </>
-            );
+                    </div>
+                `;
+            } else if (['edit_doc', 'approve_doc', 'delete_doc', 'add_cat', 'edit_cat', 'delete_cat', 'add_village'].includes(type)) {
+                // Dynamic Admin Modals
+                let title = '', icon = '', color = '', extraHTML = '', requirePass = false, requireInput = false, inputLabel = '', inputVal = '';
+                
+                if (type === 'edit_doc') {
+                    title = 'Edit Nama Dokumen'; icon = 'ph-pencil-simple'; color = 'amber-500'; requirePass = true; requireInput = true; inputLabel = 'Nama Baru'; inputVal = data.name;
+                } else if (type === 'approve_doc') {
+                    title = 'Setujui Dokumen?'; icon = 'ph-check'; color = 'emerald-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Dokumen "${escapeHTML(data.name)}" akan ditandai sebagai disetujui.</p>`;
+                } else if (type === 'delete_doc') {
+                    title = 'Hapus Permanen?'; icon = 'ph-trash'; color = 'rose-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Dokumen "${escapeHTML(data.name)}" akan dihapus dari server.</p>`;
+                } else if (type === 'add_cat') {
+                    title = 'Tambah Kategori'; icon = 'ph-plus'; color = 'brand-primary'; requireInput = true; inputLabel = 'Nama Kategori';
+                } else if (type === 'edit_cat') {
+                    title = 'Edit Kategori'; icon = 'ph-pencil-simple'; color = 'amber-500'; requirePass = true; requireInput = true; inputLabel = 'Nama Kategori'; inputVal = data.name;
+                } else if (type === 'delete_cat') {
+                    title = 'Hapus Kategori?'; icon = 'ph-trash'; color = 'rose-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Kategori "${escapeHTML(data.name)}" akan dihapus permanen.</p>`;
+                } else if (type === 'add_village') {
+                    title = 'Tambah Kampung Baru'; icon = 'ph-house-line'; color = 'brand-primary'; requireInput = true; inputLabel = 'Nama Kampung';
+                }
 
-            return (
-                <div className={`flex h-[100dvh] w-full ${printMode ? 'hidden' : 'flex'}`}>
-                    <Sidebar />
-                    
-                    <main className="flex-1 flex flex-col min-w-0 bg-brand-main relative overflow-hidden">
+                content = `
+                    <form id="form-admin-action">
+                        <div class="w-12 h-12 rounded-full bg-${color}/20 text-${color} flex items-center justify-center mx-auto mb-4"><i class="ph-bold ${icon} text-2xl"></i></div>
+                        <h3 class="text-lg font-bold text-white text-center mb-2">${title}</h3>
+                        ${extraHTML}
+                        <div id="modal-error-box" class="hidden mb-4 p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center"></div>
+                        <div class="space-y-4 mb-6">
+                            ${requireInput ? `<div><label class="block text-xs font-medium text-slate-400 mb-1.5">${inputLabel}</label><input type="text" id="modal-input-text" value="${escapeHTML(inputVal)}" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-brand-primary" required /></div>` : ''}
+                            ${requirePass ? `<div><label class="block text-xs font-medium text-${color} mb-1.5">Password Administrator</label><input type="password" id="modal-input-pass" class="w-full bg-[#131b2d] border border-${color}/30 rounded-xl px-4 py-3 text-sm text-white outline-none" required /></div>` : ''}
+                        </div>
+                        <div class="flex gap-3">
+                            <button type="button" class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Batal</button>
+                            <button type="submit" id="btn-submit-action" class="flex-1 py-2.5 rounded-xl bg-${color} hover:bg-opacity-80 text-white text-sm font-medium shadow-lg">Simpan</button>
+                        </div>
+                    </form>
+                `;
+            }
+            
+            els.modalContent.innerHTML = content;
+
+            // Bind Modal Forms Dynamically
+            const formUpload = document.getElementById('form-upload');
+            if (formUpload) formUpload.addEventListener('submit', handleUploadSubmit);
+
+            const formAdmin = document.getElementById('form-admin-action');
+            if (formAdmin) formAdmin.addEventListener('submit', handleAdminAction);
+        }
+
+        function closeModal() {
+            if (state.isUploading) return;
+            state.modalConfig = { type: null, data: null };
+            els.modalContainer.classList.add('hidden');
+            els.modalContent.innerHTML = '';
+        }
+
+        async function handleUploadSubmit(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('input-file');
+            const file = fileInput.files[0];
+            const catId = document.getElementById('input-cat').value;
+            const vilId = document.getElementById('input-vil').value;
+            const errorBox = document.getElementById('upload-error-box');
+            const errorMsg = document.getElementById('upload-error-msg');
+            const btnSubmit = document.getElementById('btn-submit-upload');
+
+            if (!file || !catId || !vilId) return;
+            if (file.size > 524288000) {
+                errorMsg.innerText = 'Ukuran file melebihi batas (500 MB)!';
+                errorBox.classList.remove('hidden'); return;
+            }
+
+            state.isUploading = true;
+            btnSubmit.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Proses...`;
+            btnSubmit.disabled = true;
+            document.querySelectorAll('.btn-close-modal').forEach(b => b.disabled = true);
+            
+            document.getElementById('upload-progress-container').classList.remove('hidden');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressText = document.getElementById('upload-progress-text');
+
+            try {
+                const filePath = `documents/${appId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+                const storageRef = ref(storage, filePath);
+                const uploadTask = uploadBytesResumable(storageRef, file);
+                
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        progressBar.style.width = `${progress}%`;
+                        progressText.innerText = `Mengunggah: ${progress}%`;
+                    },
+                    (error) => {
+                        console.error(error);
+                        errorMsg.innerText = 'Gagal mengunggah file.';
+                        errorBox.classList.remove('hidden');
+                        resetUploadUI(btnSubmit);
+                    },
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        const newDoc = {
+                            name: file.name,
+                            categoryId: catId,
+                            villageId: vilId,
+                            size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+                            status: state.userRole === 'admin' ? 'DISETUJUI' : 'MENUNGGU',
+                            fileUrl: downloadURL,
+                            fileType: file.type,
+                            storagePath: uploadTask.snapshot.ref.fullPath,
+                            createdAt: new Date().toISOString()
+                        };
                         
-                        <header className="p-4 md:p-8 md:pb-4 border-b border-slate-800/50 flex items-center justify-between z-10 sticky top-0 bg-brand-main/90 backdrop-blur-md gap-3 shadow-sm md:shadow-none">
-                            <button className="md:hidden text-slate-300 p-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50" onClick={() => setIsMobileMenuOpen(true)}>
-                                <i className="ph-bold ph-list text-xl"></i>
-                            </button>
-                            
-                            <div className="relative flex-1 max-w-2xl">
-                                <i className="ph ph-magnifying-glass absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-slate-400 text-base md:text-lg"></i>
-                                <input 
-                                    type="text" 
-                                    placeholder="Cari dokumen..." 
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-[#162032] border border-slate-700/50 rounded-full pl-9 md:pl-12 pr-4 py-2 md:py-2.5 text-xs md:text-sm text-white focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-slate-500" 
-                                />
-                            </div>
-                            <div className="flex items-center gap-2 md:gap-3 shrink-0">
-                                <button onClick={handleRefresh} className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-brand-primary transition-all shadow-sm">
-                                    <i className="ph-bold ph-arrows-clockwise text-base md:text-lg"></i>
-                                </button>
-                                <button onClick={() => setIsLightMode(!isLightMode)} className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-amber-400 transition-all shadow-sm">
-                                    <i className={`ph-bold ${isLightMode ? 'ph-moon' : 'ph-sun'} text-base md:text-lg`}></i>
-                                </button>
-                            </div>
-                        </header>
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'documents'), newDoc);
+                        
+                        state.activeMenu = `cv_${catId}_${vilId}`;
+                        renderSidebar();
+                        renderContent();
+                        
+                        resetUploadUI(btnSubmit);
+                        document.getElementById('form-upload').reset(); // Kosongkan form setelah sukses
+                        closeModal();
+                    }
+                );
+            } catch (err) {
+                errorMsg.innerText = 'Terjadi kesalahan sistem.';
+                errorBox.classList.remove('hidden');
+                resetUploadUI(btnSubmit);
+            }
+        }
 
-                        <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
-                            
-                            {activeMenu === 'dashboard' && (
-                                <div className="max-w-6xl animate-fade-in mx-auto">
-                                    <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6 flex items-center gap-2">
-                                        Ringkasan Cloud 
-                                        {isFirebaseLoading && <i className="ph ph-spinner-gap animate-spin text-brand-primary text-xl"></i>}
-                                    </h2>
-                                    
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-                                        <div className="bg-brand-panel border border-slate-700/30 rounded-2xl p-5 md:p-6 flex justify-between items-start shadow-sm">
-                                            <div>
-                                                <p className="text-xs md:text-sm font-medium text-slate-400 mb-1">Total Dokumen Cloud</p>
-                                                <p className="text-3xl md:text-4xl font-bold text-white">{docs.length}</p>
-                                            </div>
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-brand-active flex items-center justify-center shrink-0">
-                                                <i className="ph-fill ph-cloud-check text-xl md:text-2xl text-brand-primary"></i>
-                                            </div>
-                                        </div>
-                                        <div className="bg-brand-panel border border-slate-700/30 rounded-2xl p-5 md:p-6 flex justify-between items-start shadow-sm">
-                                            <div>
-                                                <p className="text-xs md:text-sm font-medium text-slate-400 mb-1">Menunggu Verifikasi</p>
-                                                <p className="text-3xl md:text-4xl font-bold text-white">{docs.filter(d => d.status === 'MENUNGGU').length}</p>
-                                            </div>
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
-                                                <i className="ph-fill ph-clock-counter-clockwise text-xl md:text-2xl text-amber-500"></i>
-                                            </div>
-                                        </div>
-                                        <div className="bg-brand-panel border border-slate-700/30 rounded-2xl p-5 md:p-6 flex justify-between items-start shadow-sm">
-                                            <div>
-                                                <p className="text-xs md:text-sm font-medium text-slate-400 mb-1">Disetujui</p>
-                                                <p className="text-3xl md:text-4xl font-bold text-white">{docs.filter(d => d.status === 'DISETUJUI').length}</p>
-                                            </div>
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                                                <i className="ph-fill ph-check-circle text-xl md:text-2xl text-emerald-500"></i>
-                                            </div>
-                                        </div>
-                                    </div>
+        function resetUploadUI(btn) {
+            state.isUploading = false;
+            btn.innerHTML = 'Unggah File';
+            btn.disabled = false;
+            document.querySelectorAll('.btn-close-modal').forEach(b => b.disabled = false);
+        }
 
-                                    <h3 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-4">Dokumen Tersimpan</h3>
-                                    
-                                    <div className="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm w-full">
-                                        <div className="overflow-x-auto w-full">
-                                            <table className="w-full text-left border-collapse min-w-[700px]">
-                                                <thead>
-                                                    <tr className="border-b border-slate-700 bg-slate-800/30">
-                                                        <th className="py-3 md:py-4 pl-4 md:pl-6 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Dokumen</th>
-                                                        <th className="py-3 md:py-4 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori</th>
-                                                        <th className="py-3 md:py-4 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Desa</th>
-                                                        <th className="py-3 md:py-4 pr-4 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                                        <th className="py-3 md:py-4 pr-4 md:pr-6 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {filteredDocs.length > 0 ? filteredDocs.map((doc) => (
-                                                        <tr key={doc.id} className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors group">
-                                                            <td className="py-3 md:py-4 pl-4 md:pl-6 text-xs md:text-sm text-slate-200 font-medium max-w-[150px] md:max-w-[200px] truncate" title={doc.name}>{doc.name}</td>
-                                                            <td className="py-3 md:py-4 text-xs md:text-sm text-slate-400">{categories.find(c => c.id === doc.categoryId)?.name || 'Unknown'}</td>
-                                                            <td className="py-3 md:py-4 text-xs md:text-sm text-slate-200 font-semibold">{villages.find(v => v.id === doc.villageId)?.name || 'Unknown'}</td>
-                                                            <td className="py-3 md:py-4 pr-4">
-                                                                {doc.status === 'DISETUJUI' ? (
-                                                                    <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">
-                                                                        <div className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-emerald-500"></div> DISETUJUI
-                                                                    </span>
-                                                                ) : (
-                                                                    <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">
-                                                                        <div className="w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-amber-500"></div> MENUNGGU
-                                                                    </span>
-                                                                )}
-                                                            </td>
-                                                            <td className="py-3 md:py-4 pr-4 md:pr-6 text-right">
-                                                                <div className="flex items-center justify-end gap-1 md:gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                                                    {userRole === 'admin' && doc.status === 'MENUNGGU' && (
-                                                                        <button onClick={() => handleVerify(doc)} className="p-1 md:p-1.5 rounded bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors" title="Setujui">
-                                                                            <i className="ph-bold ph-check text-sm md:text-base"></i>
-                                                                        </button>
-                                                                    )}
-                                                                    <button onClick={() => handleDownload(doc)} className="p-1 md:p-1.5 rounded bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-colors" title="Unduh File Asli">
-                                                                        <i className="ph-bold ph-download-simple text-sm md:text-base"></i>
-                                                                    </button>
-                                                                    {userRole === 'admin' && (
-                                                                        <>
-                                                                            <button onClick={() => { setEditDocName(doc.name); setActionPassword(''); setActionError(''); setModalConfig({ type: 'edit_doc', data: doc }); }} className="p-1 md:p-1.5 rounded bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white transition-colors" title="Edit Dokumen">
-                                                                                <i className="ph-bold ph-pencil-simple text-sm md:text-base"></i>
-                                                                            </button>
-                                                                            <button onClick={() => { setActionPassword(''); setActionError(''); setModalConfig({ type: 'delete_doc', data: doc }); }} className="p-1 md:p-1.5 rounded bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors" title="Hapus Permanen">
-                                                                                <i className="ph-bold ph-trash text-sm md:text-base"></i>
-                                                                            </button>
-                                                                        </>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    )) : (
-                                                        <tr>
-                                                            <td colSpan="5" className="py-8 text-center text-slate-500 text-sm">
-                                                                {isFirebaseLoading ? 'Memuat data dari cloud...' : 'Tidak ada dokumen yang ditemukan.'}
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+        async function handleAdminAction(e) {
+            e.preventDefault();
+            const type = state.modalConfig.type;
+            const data = state.modalConfig.data;
+            const errorBox = document.getElementById('modal-error-box');
+            const passInput = document.getElementById('modal-input-pass');
+            const textInput = document.getElementById('modal-input-text');
+            const btn = document.getElementById('btn-submit-action');
+            
+            // Password validation for restricted actions
+            if (['edit_doc', 'approve_doc', 'delete_doc', 'edit_cat', 'delete_cat'].includes(type)) {
+                if (passInput && passInput.value !== ADMIN_PASSWORD) {
+                    errorBox.innerText = 'Password Administrator salah!';
+                    errorBox.classList.remove('hidden'); return;
+                }
+            }
 
-                        </div>
+            btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i>`;
+            btn.disabled = true;
 
-                        {/* Tombol Upload Mengambang */}
-                        <button 
-                            onClick={() => { setUploadCat(''); setUploadVillage(''); setUploadError(''); setModalConfig({ type: 'upload' }); }}
-                            className="absolute bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 bg-brand-primary hover:bg-indigo-500 text-white rounded-full shadow-xl shadow-brand-primary/30 flex items-center justify-center transition-transform hover:scale-110 z-20"
-                        >
-                            <i className="ph-bold ph-plus text-2xl"></i>
-                        </button>
-                    </main>
+            try {
+                if (type === 'edit_doc') {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id);
+                    await updateDoc(docRef, { name: textInput.value });
+                } else if (type === 'approve_doc') {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id);
+                    await updateDoc(docRef, { status: 'DISETUJUI' });
+                } else if (type === 'delete_doc') {
+                    if (data.storagePath) {
+                        const storageRef = ref(storage, data.storagePath);
+                        await deleteObject(storageRef).catch(() => console.log('File fisik tidak ditemukan'));
+                    }
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id));
+                } else if (type === 'add_cat') {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'categories'), { name: textInput.value });
+                } else if (type === 'edit_cat') {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', data.id), { name: textInput.value });
+                } else if (type === 'delete_cat') {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', data.id));
+                    state.activeMenu = 'dashboard';
+                } else if (type === 'add_village') {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'villages'), { name: textInput.value });
+                }
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                errorBox.innerText = 'Gagal menyimpan data ke server.';
+                errorBox.classList.remove('hidden');
+                btn.innerText = 'Coba Lagi';
+                btn.disabled = false;
+            }
+        }
 
-                    {}
-                    {modalConfig.type && (
-                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-                            <div className="bg-brand-panel border border-slate-700/50 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
-                                <button onClick={() => setModalConfig({type: null, data: null})} className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
-                                    <i className="ph-bold ph-x text-xl"></i>
-                                </button>
-                                
-                                {/* Modal: Upload Cloud */}
-                                {modalConfig.type === 'upload' && (
-                                    <form onSubmit={handleUploadSubmit}>
-                                        <h3 className="text-xl font-bold text-white mb-6">Unggah ke Cloud</h3>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase">File Dokumen (Max 500MB)</label>
-                                                <input type="file" onChange={handleFileChange} required className="w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary hover:file:text-white transition-colors" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase">Kategori</label>
-                                                <select value={uploadCat} onChange={e => setUploadCat(e.target.value)} required className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary">
-                                                    <option value="">Pilih Kategori...</option>
-                                                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-medium text-slate-400 mb-2 uppercase">Desa</label>
-                                                <select value={uploadVillage} onChange={e => setUploadVillage(e.target.value)} required className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary">
-                                                    <option value="">Pilih Desa...</option>
-                                                    {villages.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        {uploadError && <p className="text-rose-400 text-xs mt-3">{uploadError}</p>}
-                                        {isUploading && (
-                                            <div className="mt-4">
-                                                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-brand-primary transition-all duration-300" style={{width: `${uploadProgress}%`}}></div>
-                                                </div>
-                                                <p className="text-center text-xs text-brand-primary mt-1">Mengunggah {Math.round(uploadProgress)}%</p>
-                                            </div>
-                                        )}
-                                        <button type="submit" disabled={isUploading} className={`w-full mt-6 bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-3 transition-colors ${isUploading ? 'opacity-50' : ''}`}>
-                                            {isUploading ? 'Menyimpan...' : 'Simpan ke Cloud'}
-                                        </button>
-                                    </form>
-                                )}
-
-                                {/* Modal: Hapus Dokumen Cloud */}
-                                {modalConfig.type === 'delete_doc' && (
-                                    <form onSubmit={handleDeleteDocument}>
-                                        <div className="text-center mb-6">
-                                            <div className="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-500/20">
-                                                <i className="ph-fill ph-warning-circle text-3xl text-rose-500"></i>
-                                            </div>
-                                            <h3 className="text-xl font-bold text-white">Hapus Permanen?</h3>
-                                            <p className="text-sm text-slate-400 mt-2">Anda akan menghapus "{modalConfig.data.name}" selamanya dari server Cloud Firebase.</p>
-                                        </div>
-                                        <input type="password" placeholder="Password Admin (sidey2026)" value={actionPassword} onChange={e => setActionPassword(e.target.value)} required className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white mb-4 focus:outline-none focus:border-rose-500" />
-                                        {actionError && <p className="text-rose-400 text-xs mb-4 text-center">{actionError}</p>}
-                                        <button type="submit" className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl py-3 transition-colors shadow-lg shadow-rose-600/20">Konfirmasi Hapus</button>
-                                    </form>
-                                )}
-
-                                {/* Modal lainnya (Kategori/Desa) */}
-                                {(modalConfig.type === 'add' || modalConfig.type === 'edit') && (
-                                    <form onSubmit={handleSaveCategory}>
-                                        <h3 className="text-xl font-bold text-white mb-6">{modalConfig.type === 'add' ? 'Tambah' : 'Edit'} Kategori</h3>
-                                        <input type="text" placeholder="Nama Kategori" value={catInput} onChange={e => setCatInput(e.target.value)} required className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white mb-4 focus:outline-none focus:border-brand-primary" />
-                                        {modalConfig.type === 'edit' && (
-                                            <input type="password" placeholder="Password Admin (sidey2026)" value={actionPassword} onChange={e => setActionPassword(e.target.value)} required className="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white mb-4 focus:outline-none focus:border-brand-primary" />
-                                        )}
-                                        {actionError && <p className="text-rose-400 text-xs mb-4">{actionError}</p>}
-                                        <button type="submit" className="w-full bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-3 transition-colors">Simpan Kategori</button>
-                                    </form>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const App = () => {
-            const [isLoggedIn, setIsLoggedIn] = useState(false);
-            const [userRole, setUserRole] = useState(null);
-            const [userName, setUserName] = useState(null);
-
-            const handleLogin = (role, name) => {
-                setUserRole(role);
-                setUserName(name);
-                setIsLoggedIn(true);
-            };
-
-            const handleLogout = () => {
-                setIsLoggedIn(false);
-                setUserRole(null);
-                setUserName(null);
-            };
-
-            return isLoggedIn ? (
-                <DashboardApp onLogout={handleLogout} userRole={userRole} userName={userName} />
-            ) : (
-                <LoginScreen onLogin={handleLogin} />
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // Start App
+        window.addEventListener('load', () => {
+            // Delay slighty for visual transition
+            setTimeout(initApp, 500);
+        });
     </script>
 </body>
 </html>
