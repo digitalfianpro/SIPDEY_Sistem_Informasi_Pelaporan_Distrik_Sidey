@@ -36,6 +36,10 @@
                             '0%': { boxShadow: '0 0 10px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.2)' },
                             '100%': { boxShadow: '0 0 20px rgba(99, 102, 241, 0.8), 0 0 35px rgba(99, 102, 241, 0.5)' },
                         }
+                    },
+                    boxShadow: {
+                        'emerald-glow': '0 0 25px -2px rgba(16, 185, 129, 0.25)',
+                        'emerald-glow-strong': '0 0 40px -5px rgba(16, 185, 129, 0.4)'
                     }
                 }
             }
@@ -59,16 +63,17 @@
             .print-formal tfoot { display: table-footer-group; }
             .print-formal th, .print-formal td { border: 1px solid #000 !important; padding: 8px 6px; text-align: left; font-size: 11px; color: black !important; }
             .print-formal th { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; text-align: center; vertical-align: middle; font-weight: bold; }
+            .no-print { display: none !important; }
         }
 
         body.light-mode { background-color: #f1f5f9; color: #0f172a; }
         .light-mode .bg-brand-main { background-color: #f1f5f9 !important; }
         .light-mode .bg-\[\#131b2d\] { background-color: #ffffff !important; border-right-color: #cbd5e1 !important; }
-        .light-mode .bg-brand-panel, .light-mode .bg-\[\#162032\], .light-mode .bg-\[\#1c2438\] { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .light-mode .bg-brand-panel, .light-mode .bg-\[\#162032\], .light-mode .bg-\[\#1c2438\] { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05) !important; }
         .light-mode .text-white { color: #0f172a !important; }
         .light-mode .text-slate-200 { color: #1e293b !important; }
         .light-mode .text-slate-400 { color: #64748b !important; }
-        .light-mode input, .light-mode select { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
+        .light-mode input, .light-mode select, .light-mode textarea { background-color: #ffffff !important; color: #0f172a !important; border-color: #cbd5e1 !important; }
         .light-mode .bg-brand-active { background-color: #e0e7ff !important; color: #4338ca !important; }
 
         .fast-spinner {
@@ -77,20 +82,19 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Utility classes for JS toggles */
         .hidden { display: none !important; }
         .custom-scrollbar { overflow-y: auto; }
     </style>
 </head>
 <body>
     <!-- Loading Screen -->
-    <div id="loading-screen" class="flex flex-col items-center justify-center h-screen w-full bg-[#0b1121] z-50">
+    <div id="loading-screen" class="flex flex-col items-center justify-center h-screen w-full bg-[#0b1121] z-50 fixed inset-0">
         <div class="fast-spinner"></div>
-        <p class="mt-5 text-slate-400 font-medium tracking-wide text-sm">MEMUAT SISTEM & DATABASE...</p>
+        <p class="mt-5 text-slate-400 font-medium tracking-wide text-sm">MEMUAT SISTEM...</p>
     </div>
 
     <!-- Login Screen -->
-    <div id="login-screen" class="hidden min-h-screen bg-brand-main flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div id="login-screen" class="hidden min-h-screen bg-brand-main flex-col items-center justify-center p-4 relative overflow-hidden fixed inset-0 z-40">
         <div class="absolute top-[-10%] left-[-10%] w-64 md:w-96 h-64 md:h-96 bg-brand-primary/20 rounded-full blur-3xl"></div>
         <div class="absolute bottom-[-10%] right-[-10%] w-64 md:w-96 h-64 md:h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
 
@@ -102,7 +106,7 @@
              <p class="text-brand-primary text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mt-2 text-center">DISTRIK SIDEY</p>
         </div>
 
-        <div class="w-full max-w-[420px] bg-brand-panel border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl z-10 animate-slide-up">
+        <div class="w-full max-w-[420px] bg-brand-panel border border-emerald-500/30 rounded-2xl p-6 md:p-8 shadow-emerald-glow z-10 animate-slide-up">
             <div class="flex bg-[#131b2d] p-1.5 rounded-xl mb-6 border border-slate-700/50">
                 <button id="tab-login-umum" class="flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 bg-emerald-600/90 text-white shadow-md">
                     <i class="ph-fill ph-users"></i> Umum
@@ -137,7 +141,7 @@
     </div>
 
     <!-- Dashboard Screen -->
-    <div id="dashboard-screen" class="hidden flex h-[100dvh] w-full">
+    <div id="dashboard-screen" class="hidden flex h-[100dvh] w-full relative">
         <!-- Mobile Overlay -->
         <div id="mobile-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden no-print"></div>
         
@@ -166,7 +170,7 @@
                 <div>
                     <div class="flex items-center justify-between px-2 mb-2">
                         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori Laporan</p>
-                        <button id="btn-add-cat" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1"><i class="ph-bold ph-plus text-[10px]"></i></button>
+                        <button id="btn-add-cat" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1" title="Tambah Kategori"><i class="ph-bold ph-plus text-[10px]"></i></button>
                     </div>
                     <div id="sidebar-categories" class="space-y-0.5">
                         <!-- Injected via JS -->
@@ -178,7 +182,7 @@
                         <button id="btn-toggle-kampung" class="flex-1 flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-slate-300">
                             <span id="kampung-count-label">Daftar Kampung (0)</span> <i id="kampung-toggle-icon" class="ph-bold ph-caret-down"></i>
                         </button>
-                        <button id="btn-add-vil" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1 ml-1"><i class="ph-bold ph-plus text-[10px]"></i></button>
+                        <button id="btn-add-vil" class="hidden text-slate-400 hover:text-white bg-slate-800 hover:bg-brand-primary rounded p-1 ml-1" title="Tambah Kampung"><i class="ph-bold ph-plus text-[10px]"></i></button>
                     </div>
                     <div id="sidebar-villages" class="space-y-0.5">
                         <!-- Injected via JS -->
@@ -186,24 +190,25 @@
                 </div>
             </div>
             <div class="p-4 border-t border-slate-800">
-                <button id="btn-logout" class="w-full py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 flex items-center justify-center gap-2 text-sm"><i class="ph ph-sign-out text-lg"></i> Keluar</button>
+                <button id="btn-logout" class="w-full py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:bg-rose-500/10 hover:text-rose-400 flex items-center justify-center gap-2 text-sm transition-colors"><i class="ph ph-sign-out text-lg"></i> Keluar</button>
             </div>
         </aside>
 
         <main class="flex-1 flex flex-col min-w-0 bg-brand-main relative overflow-hidden print:overflow-visible">
-            <header class="p-4 md:p-6 border-b border-slate-800/50 flex items-center justify-between bg-brand-main/90 backdrop-blur gap-3 no-print">
+            <header class="p-4 md:p-6 border-b border-slate-800/50 flex items-center justify-between bg-brand-main/90 backdrop-blur gap-3 no-print z-10">
                 <button id="btn-mobile-menu" class="md:hidden text-slate-300 p-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50">
                     <i class="ph-bold ph-list text-xl"></i>
                 </button>
                 <div class="relative flex-1 max-w-2xl">
                     <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="search-input" placeholder="Cari dokumen..." class="w-full bg-[#162032] border border-slate-700/50 rounded-full pl-11 pr-4 py-2 md:py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                    <input type="text" id="search-input" placeholder="Cari nama dokumen..." class="w-full bg-[#162032] border border-slate-700/50 rounded-full pl-11 pr-4 py-2 md:py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" autocomplete="off"/>
                 </div>
                 <div class="flex gap-2">
-                    <button id="btn-refresh" class="w-10 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-emerald-400 transition-all" title="Segarkan & Kembali ke Dashboard">
+                    <button id="btn-refresh" class="px-3 md:px-4 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center gap-2 text-slate-400 hover:text-emerald-400 transition-all shadow-sm" title="Muat Ulang Halaman">
                         <i class="ph-bold ph-arrows-clockwise text-lg"></i>
+                        <span class="text-sm font-medium hidden sm:block">Refresh</span>
                     </button>
-                    <button id="btn-theme-toggle" class="w-10 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-amber-400"><i id="theme-icon" class="ph-bold ph-sun text-lg"></i></button>
+                    <button id="btn-theme-toggle" class="w-10 h-10 rounded-xl bg-brand-panel border border-slate-700/50 flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors" title="Ganti Tema"><i id="theme-icon" class="ph-bold ph-sun text-lg"></i></button>
                 </div>
             </header>
 
@@ -213,9 +218,28 @@
         </main>
     </div>
 
+    <!-- Floating Global Upload Toast Notification (Crucial for Fast Response Feel) -->
+    <div id="upload-toast" class="hidden fixed bottom-6 right-6 z-50 w-80 md:w-96 bg-brand-panel border border-emerald-500/40 rounded-2xl p-4 shadow-emerald-glow-strong animate-slide-up no-print">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-lg bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0">
+                    <i id="toast-icon" class="ph-bold ph-cloud-arrow-up text-lg animate-pulse"></i>
+                </div>
+                <div class="min-w-0">
+                    <h4 id="toast-filename" class="text-xs font-semibold text-white truncate">Mengunggah File...</h4>
+                    <p id="toast-status" class="text-[10px] text-slate-400">Sedang memproses ke cloud...</p>
+                </div>
+            </div>
+            <span id="toast-percentage" class="text-xs font-bold text-brand-primary ml-2">0%</span>
+        </div>
+        <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div id="toast-progress-bar" class="bg-gradient-to-r from-brand-primary to-emerald-400 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+        </div>
+    </div>
+
     <!-- Modals Container -->
-    <div id="modal-container" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-brand-panel border border-slate-700/50 rounded-2xl p-6 w-full max-w-md shadow-2xl animate-slide-up relative">
+    <div id="modal-container" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
+        <div class="bg-brand-panel border border-emerald-500/40 rounded-2xl p-6 w-full max-w-md shadow-emerald-glow-strong animate-slide-up relative">
             <div id="modal-content">
                 <!-- Modal form injected via JS -->
             </div>
@@ -225,7 +249,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const defaultConfig = {
@@ -263,20 +287,29 @@
 
         // Application State
         const state = {
-            userRole: null,
+            userRole: null, // 'admin' or 'umum'
             loginMode: 'umum',
-            activeMenu: 'dashboard',
+            activeMenu: 'dashboard', // dashboard, rekapan, c_{id}, v_{id}, cv_{catId}_{vilId}
             categories: [],
             villages: [],
             docs: [],
             searchTerm: '',
             isKampungExpanded: true,
             isLightMode: false,
-            modalConfig: { type: null, data: null },
-            isUploading: false
+            modalConfig: null,
+            printConfig: JSON.parse(localStorage.getItem('sip_print_config')) || {
+                kabupaten: 'KABUPATEN MANOKWARI',
+                instansi: 'DISTRIK SIDEY',
+                alamat: 'Jalan Raya Sidey, Distrik Sidey, Kabupaten Manokwari, Papua Barat',
+                kepala: 'NAMA KEPALA DISTRIK, S.STP., M.Si',
+                nip: '19800101 200501 1 001',
+                logo: 'https://i.ibb.co.com/DP0G84Qm/Chat-GPT-Image-Jul-27-2026-05-10-28-PM.png',
+                logoSize: 96,
+                logoOffset: 0
+            }
         };
 
-        // Utility: Escape HTML to prevent basic issues
+        // Utility: Escape HTML to prevent XSS
         const escapeHTML = (str) => {
             if (!str) return '';
             return String(str).replace(/[&<>'"]/g, tag => ({
@@ -322,12 +355,19 @@
             btnThemeToggle: document.getElementById('btn-theme-toggle'),
             themeIcon: document.getElementById('theme-icon'),
 
+            // Toast Progress
+            uploadToast: document.getElementById('upload-toast'),
+            toastFilename: document.getElementById('toast-filename'),
+            toastStatus: document.getElementById('toast-status'),
+            toastPercentage: document.getElementById('toast-percentage'),
+            toastProgressBar: document.getElementById('toast-progress-bar'),
+            toastIcon: document.getElementById('toast-icon'),
+
             // Modal
             modalContainer: document.getElementById('modal-container'),
             modalContent: document.getElementById('modal-content')
         };
 
-        // Init Auth & Start Listeners
         async function initApp() {
             try {
                 if (typeof __initial_auth_token !== 'undefined') {
@@ -337,75 +377,61 @@
                 }
             } catch (e) {
                 console.warn("Auth error (melanjutkan tanpa auth):", e);
-                // Tetap lanjut meskipun auth gagal agar UI tetap terbuka
             }
             
-            try {
-                setupFirebaseListeners();
-            } catch (e) {
-                console.error("Listener error:", e);
-            }
+            setupFirebaseListeners();
             
-            els.loading.classList.add('hidden');
-            els.login.classList.remove('hidden');
-            els.login.classList.add('flex');
+            // Check session
+            const savedRole = sessionStorage.getItem('loggedRole');
+            if (savedRole) {
+                doLogin(savedRole);
+                els.loading.classList.add('hidden');
+            } else {
+                els.loading.classList.add('hidden');
+                els.login.classList.remove('hidden');
+                els.login.classList.add('flex');
+            }
         }
 
         function setupFirebaseListeners() {
             // Categories
             const catRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
             onSnapshot(catRef, (snapshot) => {
-                if (snapshot.empty) {
-                    INITIAL_CATEGORIES.forEach(c => addDoc(catRef, c).catch(console.warn));
+                if (snapshot.empty && state.categories.length === 0) {
+                    INITIAL_CATEGORIES.forEach(c => addDoc(catRef, c).catch(e => console.error(e)));
                 } else {
                     state.categories = [];
                     snapshot.forEach(doc => state.categories.push({ id: doc.id, ...doc.data() }));
                     state.categories.sort((a, b) => a.name.localeCompare(b.name));
                     if (state.userRole) { renderSidebar(); renderContent(); }
                 }
-            }, (error) => {
-                console.warn("Firestore categories error, menggunakan data default:", error);
-                state.categories = INITIAL_CATEGORIES.map((c, i) => ({id: 'cat'+i, ...c}));
-                if (state.userRole) { renderSidebar(); renderContent(); }
-            });
+            }, console.error);
 
             // Villages
             const vilRef = collection(db, 'artifacts', appId, 'public', 'data', 'villages');
             onSnapshot(vilRef, (snapshot) => {
-                if (snapshot.empty) {
-                    DEFAULT_VILLAGES.forEach(v => addDoc(vilRef, v).catch(console.warn));
+                if (snapshot.empty && state.villages.length === 0) {
+                    DEFAULT_VILLAGES.forEach(v => addDoc(vilRef, v).catch(e => console.error(e)));
                 } else {
                     state.villages = [];
                     snapshot.forEach(doc => state.villages.push({ id: doc.id, ...doc.data() }));
                     state.villages.sort((a, b) => a.name.localeCompare(b.name));
                     if (state.userRole) { renderSidebar(); renderContent(); }
                 }
-            }, (error) => {
-                console.warn("Firestore villages error, menggunakan data default:", error);
-                state.villages = DEFAULT_VILLAGES.map((v, i) => ({id: 'vil'+i, ...v}));
-                if (state.userRole) { renderSidebar(); renderContent(); }
-            });
+            }, console.error);
 
             // Documents
             const docsRef = collection(db, 'artifacts', appId, 'public', 'data', 'documents');
             onSnapshot(docsRef, (snapshot) => {
                 state.docs = [];
                 snapshot.forEach(doc => state.docs.push({ id: doc.id, ...doc.data() }));
-                state.docs.reverse(); // Newest first
-                if (state.userRole) {
-                    renderSidebar(); // Update sidebar counts
-                    renderContent(); // Update main content
-                }
-            }, (error) => {
-                console.warn("Firestore docs error:", error);
-                if (state.userRole) {
-                    renderSidebar();
-                    renderContent();
-                }
-            });
+                // Sort by timestamp descending
+                state.docs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                
+                if (state.userRole) { renderContent(); }
+            }, console.error);
         }
 
-        // Event Listeners: Login
         els.tabUmum.addEventListener('click', () => switchLoginMode('umum'));
         els.tabAdmin.addEventListener('click', () => switchLoginMode('admin'));
 
@@ -427,7 +453,7 @@
                 els.tabAdmin.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 bg-purple-600/90 text-white shadow-md';
                 els.tabUmum.className = 'flex-1 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800';
                 els.loginLabelUser.innerText = 'Username';
-                els.loginInputUser.placeholder = 'Masukkan username';
+                els.loginInputUser.placeholder = 'Masukkan username admin';
                 els.loginPassContainer.classList.remove('hidden');
                 els.loginInputPass.setAttribute('required', 'true');
                 els.loginSubmitBtn.className = 'w-full bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex justify-center items-center gap-2 mt-2 outline-none';
@@ -440,7 +466,6 @@
             const username = els.loginInputUser.value.trim();
             const password = els.loginInputPass.value;
 
-            // Simulate loading
             els.loginSubmitBtn.innerHTML = `<i class="ph ph-spinner-gap animate-spin text-xl"></i> Memproses...`;
             els.loginSubmitBtn.disabled = true;
 
@@ -461,7 +486,7 @@
                         showLoginError('Nama Lengkap wajib diisi!');
                     }
                 }
-            }, 800);
+            }, 500);
         });
 
         function showLoginError(msg) {
@@ -471,6 +496,8 @@
 
         function doLogin(role) {
             state.userRole = role;
+            sessionStorage.setItem('loggedRole', role);
+            
             els.login.classList.add('hidden');
             els.login.classList.remove('flex');
             els.dashboard.classList.remove('hidden');
@@ -487,9 +514,9 @@
             renderContent();
         }
 
-        // Event Listeners: General UI
         els.btnLogout.addEventListener('click', () => {
             state.userRole = null;
+            sessionStorage.removeItem('loggedRole');
             els.dashboard.classList.add('hidden');
             els.login.classList.remove('hidden');
             els.login.classList.add('flex');
@@ -506,18 +533,9 @@
         els.mobileOverlay.addEventListener('click', toggleMobileMenu);
 
         els.btnRefresh.addEventListener('click', () => {
-            // Efek putar saat diklik
             const icon = els.btnRefresh.querySelector('i');
             icon.classList.add('animate-spin');
-            setTimeout(() => icon.classList.remove('animate-spin'), 500);
-
-            // Reset ke tampilan Dashboard dan bersihkan pencarian
-            state.activeMenu = 'dashboard';
-            state.searchTerm = '';
-            els.searchInput.value = '';
-            
-            renderSidebar();
-            renderContent();
+            setTimeout(() => { window.location.reload(); }, 300);
         });
 
         els.btnThemeToggle.addEventListener('click', () => {
@@ -542,21 +560,19 @@
             renderContent();
         });
 
-        // Event Listeners: Dynamic Actions via Event Delegation
+        // Event Delegation for dynamic elements
         document.addEventListener('click', (e) => {
-            // Sidebar Menu Clicks
             const menuBtn = e.target.closest('.menu-btn');
             if (menuBtn) {
                 state.activeMenu = menuBtn.getAttribute('data-menu');
                 if (!els.sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
-                    toggleMobileMenu(); // Auto close on mobile
+                    toggleMobileMenu();
                 }
                 renderSidebar();
                 renderContent();
                 return;
             }
 
-            // Folder Grid Clicks
             const folderCard = e.target.closest('.folder-card');
             if (folderCard) {
                 state.activeMenu = folderCard.getAttribute('data-menu');
@@ -565,59 +581,57 @@
                 return;
             }
 
-            // Action Buttons
-            if (e.target.closest('#btn-add-cat')) openModal('add_cat');
-            if (e.target.closest('#btn-add-vil')) openModal('add_village');
-            if (e.target.closest('#btn-upload')) openModal('upload');
-            if (e.target.closest('.btn-close-modal')) closeModal();
-
-            // Print Rekapan Action
-            const printBtn = e.target.closest('#btn-print-rekapan');
-            if (printBtn) {
+            const btnEditPrint = e.target.closest('#btn-edit-print');
+            if (btnEditPrint) {
                 e.preventDefault();
-                const originalContent = printBtn.innerHTML;
-                printBtn.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-lg"></i> Menyiapkan...`;
-                printBtn.disabled = true;
-                
-                setTimeout(() => {
-                    printBtn.innerHTML = originalContent;
-                    printBtn.disabled = false;
-                    window.print();
-                }, 600); // Beri sedikit jeda agar UI sempat merender sebelum dialog print muncul
+                openModal('edit_print');
+                return;
             }
 
-            // Admin Item Actions (Edit/Delete Category)
+            if (e.target.closest('#btn-add-cat')) openModal('add_cat');
+            if (e.target.closest('#btn-add-vil')) openModal('add_village');
+            if (e.target.closest('#btn-upload')) {
+                // Determine pre-selected category or village if inside a specific view
+                let preCat = '', preVil = '';
+                if (state.activeMenu.startsWith('c_')) preCat = state.activeMenu.substring(2);
+                if (state.activeMenu.startsWith('v_')) preVil = state.activeMenu.substring(2);
+                if (state.activeMenu.startsWith('cv_')) {
+                    const pts = state.activeMenu.split('_');
+                    preCat = pts[1]; preVil = pts[2];
+                }
+                openModal('upload', { preCat, preVil });
+            }
+            if (e.target.closest('.btn-close-modal')) closeModal();
+
+            const printBtn = e.target.closest('#btn-print-rekapan');
+            if (printBtn) { e.preventDefault(); window.print(); }
+
+            // Admin Actions
             const editCatBtn = e.target.closest('.btn-edit-cat');
             if (editCatBtn) { e.stopPropagation(); openModal('edit_cat', { id: editCatBtn.dataset.id, name: editCatBtn.dataset.name }); }
             
             const delCatBtn = e.target.closest('.btn-delete-cat');
             if (delCatBtn) { e.stopPropagation(); openModal('delete_cat', { id: delCatBtn.dataset.id, name: delCatBtn.dataset.name }); }
 
-            // Document Actions
             const previewDoc = e.target.closest('.btn-preview-doc');
             if (previewDoc) {
                 const docData = state.docs.find(d => d.id === previewDoc.dataset.id);
-                openModal('preview_doc', docData);
+                if(docData) openModal('preview_doc', docData);
             }
-            const editDoc = e.target.closest('.btn-edit-doc');
-            if (editDoc) {
-                const docData = state.docs.find(d => d.id === editDoc.dataset.id);
-                openModal('edit_doc', docData);
-            }
-            const approveDoc = e.target.closest('.btn-approve-doc');
-            if (approveDoc) {
-                const docData = state.docs.find(d => d.id === approveDoc.dataset.id);
-                openModal('approve_doc', docData);
-            }
+            
             const delDoc = e.target.closest('.btn-delete-doc');
             if (delDoc) {
                 const docData = state.docs.find(d => d.id === delDoc.dataset.id);
-                openModal('delete_doc', docData);
+                if(docData) openModal('delete_doc', docData);
+            }
+
+            const approveDoc = e.target.closest('.btn-approve-doc');
+            if (approveDoc) {
+                handleApproveDoc(approveDoc.dataset.id);
             }
         });
 
         function renderSidebar() {
-            // Update Active States for static buttons
             document.querySelectorAll('.menu-btn[data-menu="dashboard"], .menu-btn[data-menu="rekapan"]').forEach(btn => {
                 const menu = btn.getAttribute('data-menu');
                 if (state.activeMenu === menu) {
@@ -629,7 +643,6 @@
                 }
             });
 
-            // Render Categories
             let catHTML = '';
             state.categories.forEach(cat => {
                 const isActive = state.activeMenu === 'c_' + cat.id || state.activeMenu.startsWith(`cv_${cat.id}_`);
@@ -639,8 +652,8 @@
                 if (state.userRole === 'admin') {
                     adminActions = `
                         <div class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-[#1e293b] p-1 rounded shadow-lg">
-                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-edit-cat text-slate-400 hover:text-brand-primary p-0.5"><i class="ph-fill ph-pencil-simple text-xs"></i></button>
-                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-delete-cat text-slate-400 hover:text-rose-400 p-0.5"><i class="ph-fill ph-trash text-xs"></i></button>
+                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-edit-cat text-slate-400 hover:text-brand-primary p-0.5" title="Edit"><i class="ph-fill ph-pencil-simple text-xs"></i></button>
+                            <button data-id="${cat.id}" data-name="${escapeHTML(cat.name)}" class="btn-delete-cat text-slate-400 hover:text-rose-400 p-0.5" title="Hapus"><i class="ph-fill ph-trash text-xs"></i></button>
                         </div>
                     `;
                 }
@@ -656,7 +669,6 @@
             });
             els.sidebarCats.innerHTML = catHTML;
 
-            // Render Villages
             els.kampungCountLabel.innerText = `Daftar Kampung (${state.villages.length})`;
             let vilHTML = '';
             if (state.isKampungExpanded) {
@@ -691,29 +703,11 @@
             if (state.activeMenu === 'dashboard') {
                 els.contentArea.innerHTML = getDashboardHTML();
             } else if (state.activeMenu === 'rekapan') {
-                els.contentArea.innerHTML = getRekapanHTML();
+                els.contentArea.innerHTML = getRekapanHTML(filteredDocs);
             } else {
                 els.contentArea.innerHTML = getHeaderContentHTML() + 
                     ((state.activeMenu.startsWith('c_') && !state.activeMenu.startsWith('cv_')) ? getFolderGridHTML() : getDocTableHTML(filteredDocs));
             }
-        }
-
-        function getMainTitle() {
-            if (state.activeMenu.startsWith('c_')) {
-                const catId = state.activeMenu.substring(2);
-                return state.categories.find(c => c.id === catId)?.name || 'Kategori';
-            }
-            if (state.activeMenu.startsWith('v_')) {
-                const vilId = state.activeMenu.substring(2);
-                return state.villages.find(v => v.id === vilId)?.name || 'Desa';
-            }
-            if (state.activeMenu.startsWith('cv_')) {
-                const parts = state.activeMenu.split('_');
-                const catName = state.categories.find(c => c.id === parts[1])?.name || '';
-                const vilName = state.villages.find(v => v.id === parts[2])?.name || '';
-                return `${catName} - ${vilName}`;
-            }
-            return 'Dokumen';
         }
 
         function getDashboardHTML() {
@@ -724,9 +718,12 @@
             const recentDocs = state.docs.slice(0, 5);
             if (recentDocs.length > 0) {
                 recentDocsHTML = recentDocs.map(doc => `
-                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20">
+                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors">
                         <td class="py-4 pl-6 text-sm text-slate-200 font-medium">
-                            <div class="flex items-center gap-3"><i class="ph-fill ph-file-pdf text-xl text-rose-400"></i><span class="truncate max-w-[200px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</span></div>
+                            <div class="flex items-center gap-3">
+                                <i class="ph-fill ph-file-text text-xl ${doc.type?.includes('pdf') ? 'text-rose-400' : 'text-brand-primary'}"></i>
+                                <span class="truncate max-w-[200px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</span>
+                            </div>
                         </td>
                         <td class="py-4 text-sm text-slate-400">${escapeHTML(state.villages.find(v => v.id === doc.villageId)?.name || '-')}</td>
                         <td class="py-4 text-sm text-slate-400">${escapeHTML(state.categories.find(c => c.id === doc.categoryId)?.name || '-')}</td>
@@ -738,7 +735,7 @@
                     </tr>
                 `).join('');
             } else {
-                recentDocsHTML = `<tr><td colSpan="4" class="py-8 text-center text-sm text-slate-500">Belum ada dokumen yang diunggah ke server.</td></tr>`;
+                recentDocsHTML = `<tr><td colSpan="4" class="py-8 text-center text-sm text-slate-500">Belum ada dokumen yang diunggah.</td></tr>`;
             }
 
             return `
@@ -750,15 +747,15 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
-                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-emerald-500/30 rounded-2xl p-6 shadow-emerald-glow relative overflow-hidden group">
                             <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-brand-primary/10 rounded-full blur-2xl group-hover:bg-brand-primary/20 transition-all"></div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-slate-400 font-medium text-sm">Total Dokumen</h3>
-                                <div class="w-10 h-10 rounded-xl bg-brand-primary/20 text-brand-primary flex items-center justify-center"><i class="ph-fill ph-file-text text-xl"></i></div>
+                                <div class="w-10 h-10 rounded-xl bg-brand-primary/20 text-brand-primary flex items-center justify-center"><i class="ph-fill ph-files text-xl"></i></div>
                             </div>
                             <div class="text-3xl font-bold text-white">${state.docs.length}</div>
                         </div>
-                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-emerald-500/30 rounded-2xl p-6 shadow-emerald-glow relative overflow-hidden group">
                             <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-slate-400 font-medium text-sm">Disetujui</h3>
@@ -766,28 +763,30 @@
                             </div>
                             <div class="text-3xl font-bold text-white">${approvedCount}</div>
                         </div>
-                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-slate-700/50 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+                        <div class="bg-gradient-to-br from-brand-panel to-[#131b2d] border border-emerald-500/30 rounded-2xl p-6 shadow-emerald-glow relative overflow-hidden group">
                             <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="text-slate-400 font-medium text-sm">Menunggu Review</h3>
-                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center"><i class="ph-fill ph-clock-counter-clockwise text-xl"></i></div>
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center"><i class="ph-fill ph-clock text-xl"></i></div>
                             </div>
                             <div class="text-3xl font-bold text-white">${pendingCount}</div>
                         </div>
                     </div>
                     <h3 class="text-lg font-bold text-white mb-4">Dokumen Terbaru</h3>
-                    <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="bg-brand-panel border border-emerald-500/30 rounded-2xl overflow-hidden shadow-emerald-glow">
                         <div class="overflow-x-auto w-full">
                             <table class="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
-                                    <tr class="border-b border-slate-700 bg-slate-800/30">
-                                        <th class="py-4 pl-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Dokumen</th>
-                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kampung</th>
-                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori</th>
-                                        <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <tr class="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
+                                        <th class="py-3 px-6 font-medium">Nama Dokumen</th>
+                                        <th class="py-3 px-4 font-medium">Asal Kampung</th>
+                                        <th class="py-3 px-4 font-medium">Kategori</th>
+                                        <th class="py-3 px-4 font-medium">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody>${recentDocsHTML}</tbody>
+                                <tbody>
+                                    ${recentDocsHTML}
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -795,429 +794,641 @@
             `;
         }
 
-        function getRekapanHTML() {
-            let theadHTML = state.categories.map(cat => `<th class="py-3 px-2 border border-slate-700/50 print:border-black text-[10px] sm:text-xs font-bold text-slate-400 print:text-black uppercase text-center">${escapeHTML(cat.name)}</th>`).join('');
-            
-            let tbodyHTML = '';
-            state.villages.forEach((village, index) => {
-                let rowTotal = 0;
-                let colsHTML = state.categories.map(cat => {
-                    const count = state.docs.filter(d => d.villageId === village.id && d.categoryId === cat.id).length;
-                    rowTotal += count;
-                    const content = count > 0 ? `<span class="inline-flex w-6 h-6 items-center justify-center bg-emerald-500/10 text-emerald-400 print:bg-transparent print:text-black font-bold rounded-full">${count}</span>` : `<span class="text-slate-600 print:text-gray-400">-</span>`;
-                    return `<td class="py-3 px-2 border-r border-slate-700/50 print:border-black text-sm text-center">${content}</td>`;
-                }).join('');
-
-                tbodyHTML += `
-                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 print:border-black">
-                        <td class="py-3 px-4 border-r border-slate-700/50 print:border-black text-sm text-slate-400 print:text-black text-center">${index + 1}</td>
-                        <td class="py-3 px-4 border-r border-slate-700/50 print:border-black text-sm text-slate-200 print:text-black font-medium">${escapeHTML(village.name)}</td>
-                        ${colsHTML}
-                        <td class="py-3 px-4 text-sm font-bold text-center text-white print:text-black">${rowTotal}</td>
+        function getRekapanHTML(docs = state.docs) {
+            let trs = '';
+            docs.forEach((doc, i) => {
+                const vilName = state.villages.find(v => v.id === doc.villageId)?.name || '-';
+                const catName = state.categories.find(c => c.id === doc.categoryId)?.name || '-';
+                const date = doc.timestamp ? new Date(doc.timestamp.seconds * 1000).toLocaleDateString('id-ID') : '-';
+                trs += `
+                    <tr class="border-b border-slate-800/30 hover:bg-slate-800/10">
+                        <td class="py-2 px-3 text-center">${i+1}</td>
+                        <td class="py-2 px-3">${escapeHTML(doc.name)}</td>
+                        <td class="py-2 px-3">${escapeHTML(vilName)}</td>
+                        <td class="py-2 px-3">${escapeHTML(catName)}</td>
+                        <td class="py-2 px-3 text-center">${doc.status}</td>
+                        <td class="py-2 px-3 text-center">${date}</td>
                     </tr>
                 `;
             });
 
-            let tfootHTML = state.categories.map(cat => {
-                const colTotal = state.docs.filter(d => d.categoryId === cat.id).length;
-                return `<td class="py-4 px-2 border-r border-slate-700/50 print:border-black text-sm font-bold text-brand-primary print:text-black text-center">${colTotal}</td>`;
-            }).join('');
+            if (docs.length === 0) trs = `<tr><td colspan="6" class="text-center py-4 text-slate-500">Tidak ada data dokumen ditemukan.</td></tr>`;
 
-            const printButtonHTML = state.userRole === 'admin' ? `
-                <button id="btn-print-rekapan" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-transform hover:-translate-y-0.5">
-                    <i class="ph-bold ph-printer text-lg"></i> Cetak Rekapan
-                </button>
-            ` : '';
+            const cfg = state.printConfig;
+            const dateOpts = { day: 'numeric', month: 'long', year: 'numeric' };
+            const today = new Date().toLocaleDateString('id-ID', dateOpts);
 
             return `
-                <div class="max-w-6xl animate-fade-in mx-auto print:max-w-full">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 no-print">
+                <div class="max-w-7xl mx-auto animate-fade-in print-formal">
+                    <div class="flex justify-between items-center mb-6 no-print">
                         <div>
-                            <h2 class="text-xl md:text-2xl font-bold text-white">Rekapan Laporan Distrik</h2>
-                            <p class="text-slate-400 text-sm mt-1">Matriks ketersediaan dokumen berdasarkan Kampung.</p>
+                            <h2 class="text-2xl font-bold text-white">Rekapan Laporan</h2>
+                            <p class="text-slate-400 text-sm">Semua data dokumen dalam sistem.</p>
                         </div>
-                        ${printButtonHTML}
+                        <div class="flex gap-2">
+                            ${state.userRole === 'admin' ? `
+                            <button id="btn-edit-print" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg transition-all">
+                                <i class="ph-bold ph-pencil-simple"></i> Edit Data Cetak
+                            </button>
+                            ` : ''}
+                            <button id="btn-print-rekapan" class="bg-brand-primary hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg transition-all">
+                                <i class="ph-bold ph-printer"></i> Cetak PDF
+                            </button>
+                        </div>
                     </div>
-                    <div class="hidden print-only text-center mb-6 print-formal">
-                        <h2 style="font-size: 18px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">REKAPAN DOKUMEN SISTEM INFORMASI PELAPORAN DISTRIK SIDEY</h2>
-                        <p style="font-size: 12px; margin-bottom: 15px;">Dicetak pada: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    
+                    <!-- KOP SURAT (Hanya Tampil di Print) -->
+                    <div class="hidden print:block mb-6 w-full">
+                        <div class="flex items-center justify-between pb-3 border-b-4 border-black" style="border-bottom-style: double;">
+                            <div style="width: ${cfg.logoSize !== undefined ? cfg.logoSize : 96}px; transform: translateX(${cfg.logoOffset !== undefined ? cfg.logoOffset : 0}px);" class="shrink-0 flex justify-center">
+                                <img src="${cfg.logo}" style="width: 100%; height: ${cfg.logoSize !== undefined ? cfg.logoSize : 96}px;" class="object-contain" />
+                            </div>
+                            <div class="flex-1 text-center px-4">
+                                <h1 class="text-xl font-bold uppercase text-black" style="color: black !important; line-height: 1.2;">PEMERINTAH ${escapeHTML(cfg.kabupaten)}</h1>
+                                <h2 class="text-2xl font-bold uppercase text-black tracking-wide" style="color: black !important; line-height: 1.2;">${escapeHTML(cfg.instansi)}</h2>
+                                <p class="text-sm text-black mt-1" style="color: black !important;">${escapeHTML(cfg.alamat)}</p>
+                            </div>
+                            <div style="width: ${cfg.logoSize !== undefined ? cfg.logoSize : 96}px;" class="shrink-0"></div> <!-- Spacer untuk menyeimbangkan posisi tengah -->
+                        </div>
+                        <div class="text-center mt-6 mb-4">
+                            <h3 class="text-lg font-bold uppercase text-black underline" style="color: black !important;">REKAPAN DOKUMEN SISTEM INFORMASI PELAPORAN</h3>
+                        </div>
                     </div>
-                    <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm print:border-none print:shadow-none print:rounded-none">
-                        <div class="overflow-x-auto w-full print:overflow-visible">
-                            <table class="w-full text-left border-collapse min-w-[800px] print:min-w-full print-formal">
+
+                    <!-- PREVIEW ON SCREEN KOP SURAT -->
+                    <div class="mb-6 p-4 rounded-xl border border-slate-700/50 bg-[#162032] no-print">
+                        <p class="text-xs text-brand-primary font-bold uppercase tracking-wider mb-3">Pratinjau Kop Surat (Di Lembar Cetak)</p>
+                        <div class="flex items-center justify-between pb-3 border-b-4 border-slate-600" style="border-bottom-style: double;">
+                            <div style="width: ${(cfg.logoSize !== undefined ? cfg.logoSize : 96) * 0.7}px; transform: translateX(${(cfg.logoOffset !== undefined ? cfg.logoOffset : 0) * 0.7}px);" class="shrink-0 flex justify-center">
+                                <img src="${cfg.logo}" style="width: 100%; height: ${(cfg.logoSize !== undefined ? cfg.logoSize : 96) * 0.7}px;" class="object-contain" />
+                            </div>
+                            <div class="flex-1 text-center px-4">
+                                <h1 class="text-sm font-bold uppercase text-slate-300">PEMERINTAH ${escapeHTML(cfg.kabupaten)}</h1>
+                                <h2 class="text-base font-bold uppercase text-white tracking-wide">${escapeHTML(cfg.instansi)}</h2>
+                                <p class="text-[10px] text-slate-400 mt-1">${escapeHTML(cfg.alamat)}</p>
+                            </div>
+                            <div style="width: ${(cfg.logoSize !== undefined ? cfg.logoSize : 96) * 0.7}px;" class="shrink-0"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-panel border border-emerald-500/30 rounded-2xl overflow-hidden shadow-emerald-glow p-1 print:border-none print:shadow-none print:p-0 print:bg-transparent">
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-left border-collapse text-sm min-w-[800px] print:min-w-full print:text-black">
                                 <thead>
-                                    <tr class="bg-slate-800/50 print:bg-gray-200">
-                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-slate-400 print:text-black uppercase text-center w-12">No</th>
-                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-slate-400 print:text-black uppercase">Nama Kampung</th>
-                                        ${theadHTML}
-                                        <th class="py-3 px-4 border border-slate-700/50 print:border-black text-xs font-bold text-emerald-400 print:text-black uppercase text-center w-20">Total</th>
+                                    <tr class="bg-slate-800/80 text-slate-300 print:bg-gray-200 print:text-black">
+                                        <th class="py-3 px-3 text-center w-12">No</th>
+                                        <th class="py-3 px-3">Nama Dokumen</th>
+                                        <th class="py-3 px-3">Asal Kampung</th>
+                                        <th class="py-3 px-3">Kategori</th>
+                                        <th class="py-3 px-3 text-center">Status</th>
+                                        <th class="py-3 px-3 text-center">Tanggal</th>
                                     </tr>
                                 </thead>
-                                <tbody>${tbodyHTML}</tbody>
-                                <tfoot>
-                                    <tr class="bg-slate-800/80 print:bg-gray-200 border-t-2 border-slate-600 print:border-black">
-                                        <td colSpan="2" class="py-4 px-4 border-r border-slate-700/50 print:border-black text-sm font-bold text-slate-200 print:text-black text-right uppercase">Total Dokumen</td>
-                                        ${tfootHTML}
-                                        <td class="py-4 px-4 text-sm font-bold text-emerald-400 print:text-black text-center">${state.docs.length}</td>
-                                    </tr>
-                                </tfoot>
+                                <tbody class="text-slate-300 print:text-black">
+                                    ${trs}
+                                </tbody>
                             </table>
-                            <div class="hidden print-only mt-12 w-full">
-                                <table class="w-full border-none print-formal" style="border: none !important">
-                                    <tbody>
-                                        <tr>
-                                            <td class="w-1/2 text-center border-none" style="border: none !important">
-                                                <p class="mb-20">Mengetahui,<br/>Kepala Distrik Sidey</p>
-                                                <p class="font-bold underline mb-1">......................................................</p>
-                                                <p>NIP. ...............................................</p>
-                                            </td>
-                                            <td class="w-1/2 text-center border-none" style="border: none !important">
-                                                <p class="mb-20">Sidey, ${new Date().toLocaleDateString('id-ID')}<br/>Admin Sistem Terpadu</p>
-                                                <p class="font-bold underline">......................................................</p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AREA TANDA TANGAN (Hanya tampil di print) -->
+                    <div class="hidden print:flex justify-end mt-12 w-full text-black">
+                        <div class="text-center w-64" style="color: black !important;">
+                            <p class="mb-20">Sidey, ${today}<br/>Kepala Distrik</p>
+                            <p class="font-bold underline uppercase">${escapeHTML(cfg.kepala)}</p>
+                            <p>NIP. ${escapeHTML(cfg.nip)}</p>
                         </div>
                     </div>
                 </div>
             `;
         }
 
+        function getMainTitle() {
+            if (state.activeMenu.startsWith('c_')) {
+                const catId = state.activeMenu.substring(2);
+                return state.categories.find(c => c.id === catId)?.name || 'Kategori';
+            }
+            if (state.activeMenu.startsWith('v_')) {
+                const vilId = state.activeMenu.substring(2);
+                return state.villages.find(v => v.id === vilId)?.name || 'Kampung';
+            }
+            if (state.activeMenu.startsWith('cv_')) {
+                const parts = state.activeMenu.split('_');
+                const catName = state.categories.find(c => c.id === parts[1])?.name || '';
+                const vilName = state.villages.find(v => v.id === parts[2])?.name || '';
+                return `${catName} - ${vilName}`;
+            }
+            return 'Dokumen';
+        }
+
         function getHeaderContentHTML() {
             return `
-                <div class="max-w-6xl animate-fade-in mx-auto">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-                        <h2 class="text-2xl font-bold text-white">${escapeHTML(getMainTitle())}</h2>
-                        <button id="btn-upload" class="px-4 py-2 bg-brand-primary hover:bg-indigo-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
-                            <i class="ph-bold ph-upload-simple text-lg"></i> Unggah File Fisik
-                        </button>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4 animate-fade-in no-print">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            ${state.activeMenu.startsWith('v_') ? '<i class="ph-fill ph-house text-brand-primary"></i>' : '<i class="ph-fill ph-folder-open text-brand-primary"></i>'}
+                            ${escapeHTML(getMainTitle())}
+                        </h2>
                     </div>
+                    <button id="btn-upload" class="bg-brand-primary hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg transition-all shadow-brand-primary/20 shrink-0">
+                        <i class="ph-bold ph-upload-simple text-lg"></i> Unggah File Baru
+                    </button>
+                </div>
             `;
         }
 
         function getFolderGridHTML() {
-            const currentCatId = state.activeMenu.substring(2);
-            let gridHTML = state.villages.map(village => {
-                const fileCount = state.docs.filter(d => d.categoryId === currentCatId && d.villageId === village.id).length;
-                return `
-                    <div data-menu="cv_${currentCatId}_${village.id}" class="folder-card bg-[#1c2438] border border-slate-700/30 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-800/80 shadow-sm group transition-transform hover:-translate-y-1">
-                        <i class="ph-fill ph-folder text-5xl text-[#818cf8] mb-4 group-hover:scale-110 transition-transform"></i>
-                        <h3 class="text-white font-bold text-[15px] mb-2 text-center">${escapeHTML(village.name)}</h3>
-                        <div class="bg-[#131b2d] border border-slate-700/50 px-3 py-1 rounded-full text-xs text-slate-400 font-medium">${fileCount} File Fisik</div>
+            const catId = state.activeMenu.substring(2);
+            let html = '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in">';
+            
+            state.villages.forEach(village => {
+                const docCount = state.docs.filter(d => d.categoryId === catId && d.villageId === village.id).length;
+                html += `
+                    <div data-menu="cv_${catId}_${village.id}" class="folder-card bg-brand-panel border border-emerald-500/30 rounded-2xl p-5 cursor-pointer hover:border-emerald-400 hover:shadow-emerald-glow-strong hover:bg-slate-800/50 transition-all group flex flex-col items-center text-center shadow-emerald-glow">
+                        <div class="w-16 h-16 rounded-2xl bg-[#131b2d] flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-inner">
+                            <i class="ph-fill ph-folder text-4xl text-brand-primary group-hover:text-indigo-400"></i>
+                        </div>
+                        <h3 class="text-white font-medium text-sm mb-1 line-clamp-1">${escapeHTML(village.name)}</h3>
+                        <p class="text-slate-400 text-xs">${docCount} Dokumen</p>
                     </div>
                 `;
-            }).join('');
+            });
             
-            return `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">${gridHTML}</div></div>`; // closes max-w-6xl
+            html += '</div>';
+            return html;
         }
 
-        function getDocTableHTML(filteredDocs) {
+        function getDocTableHTML(docs) {
             let trs = '';
-            if (filteredDocs.length > 0) {
-                trs = filteredDocs.map(doc => {
-                    let adminBtns = '';
-                    if (state.userRole === 'admin') {
-                        let approveBtn = doc.status !== 'DISETUJUI' ? `<button data-id="${doc.id}" class="btn-approve-doc p-1.5 rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white" title="Setujui Dokumen"><i class="ph-bold ph-check text-base"></i></button>` : '';
-                        adminBtns = `
-                            <button data-id="${doc.id}" class="btn-edit-doc p-1.5 rounded bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-white" title="Edit Nama Dokumen"><i class="ph-bold ph-pencil-simple text-base"></i></button>
-                            ${approveBtn}
-                            <button data-id="${doc.id}" class="btn-delete-doc p-1.5 rounded bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white" title="Hapus Permanen"><i class="ph-bold ph-trash text-base"></i></button>
-                        `;
+            docs.forEach(doc => {
+                const vilName = state.villages.find(v => v.id === doc.villageId)?.name || '-';
+                const catName = state.categories.find(c => c.id === doc.categoryId)?.name || '-';
+                const isImage = doc.type?.includes('image');
+                const icon = isImage ? 'ph-image text-emerald-400' : 'ph-file-pdf text-rose-400';
+                
+                let actions = `
+                    <button data-id="${doc.id}" class="btn-preview-doc w-8 h-8 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-brand-primary flex items-center justify-center transition-colors" title="Lihat/Unduh"><i class="ph-bold ph-eye"></i></button>
+                `;
+
+                if (state.userRole === 'admin') {
+                    if (doc.status !== 'DISETUJUI') {
+                        actions += `<button data-id="${doc.id}" class="btn-approve-doc w-8 h-8 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-emerald-500 flex items-center justify-center transition-colors" title="Setujui"><i class="ph-bold ph-check"></i></button>`;
                     }
-                    return `
-                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 group">
-                            <td class="py-4 pl-6 text-sm text-slate-200 font-medium">
-                                <div class="flex items-center gap-3"><i class="ph-fill ph-file-pdf text-xl text-rose-400"></i><span class="truncate max-w-[250px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</span></div>
-                            </td>
-                            <td class="py-4 text-sm text-slate-400">${escapeHTML(state.categories.find(c => c.id === doc.categoryId)?.name || '-')}</td>
-                            <td class="py-4 pr-4 text-sm text-slate-400">${escapeHTML(doc.size)}</td>
-                            <td class="py-4 text-sm">
-                                <span class="px-2 py-1 text-[10px] font-bold rounded-full border ${doc.status === 'DISETUJUI' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}">${doc.status || 'MENUNGGU'}</span>
-                            </td>
-                            <td class="py-4 pr-6 text-right">
-                                <div class="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                    <button data-id="${doc.id}" class="btn-preview-doc p-1.5 rounded bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white" title="Unduh File Asli"><i class="ph-bold ph-download-simple text-base"></i></button>
-                                    ${adminBtns}
+                    actions += `<button data-id="${doc.id}" class="btn-delete-doc w-8 h-8 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-rose-500 flex items-center justify-center transition-colors" title="Hapus"><i class="ph-bold ph-trash"></i></button>`;
+                }
+
+                trs += `
+                    <tr class="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors group">
+                        <td class="py-4 pl-6 text-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-[#131b2d] flex items-center justify-center shrink-0"><i class="ph-fill ${icon} text-xl"></i></div>
+                                <div>
+                                    <p class="text-slate-200 font-medium truncate max-w-[200px] md:max-w-[300px]" title="${escapeHTML(doc.name)}">${escapeHTML(doc.name)}</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">${(doc.size / 1024 / 1024).toFixed(2)} MB</p>
                                 </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            } else {
-                trs = `<tr><td colSpan="5" class="py-12 text-center text-slate-400 text-sm">Tidak ada dokumen di folder ini pada server.</td></tr>`;
+                            </div>
+                        </td>
+                        <td class="py-4 text-sm text-slate-400 hidden sm:table-cell">${escapeHTML(vilName)}</td>
+                        <td class="py-4 text-sm text-slate-400 hidden md:table-cell">${escapeHTML(catName)}</td>
+                        <td class="py-4 text-sm">
+                            <span class="px-2 py-1 text-[10px] font-bold rounded-full border ${doc.status === 'DISETUJUI' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}">
+                                ${doc.status || 'MENUNGGU'}
+                            </span>
+                        </td>
+                        <td class="py-4 pr-6">
+                            <div class="flex items-center justify-end gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                ${actions}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if (docs.length === 0) {
+                trs = `<tr><td colspan="5" class="py-12 text-center text-slate-500 flex flex-col items-center"><i class="ph-fill ph-folder-open text-4xl mb-3 opacity-20"></i> Belum ada dokumen di folder ini.</td></tr>`;
             }
 
             return `
-                <div class="bg-brand-panel border border-slate-700/30 rounded-2xl overflow-hidden shadow-sm mt-4">
+                <div class="bg-brand-panel border border-emerald-500/30 rounded-2xl overflow-hidden shadow-emerald-glow animate-fade-in">
                     <div class="overflow-x-auto w-full">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="border-b border-slate-700 bg-slate-800/30">
-                                    <th class="py-4 pl-6 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama Dokumen (Server)</th>
-                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Kategori Laporan</th>
-                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Ukuran</th>
-                                    <th class="py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                                    <th class="py-4 pr-6 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                                <tr class="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
+                                    <th class="py-3 pl-6 font-medium">Informasi File</th>
+                                    <th class="py-3 px-4 font-medium hidden sm:table-cell">Kampung</th>
+                                    <th class="py-3 px-4 font-medium hidden md:table-cell">Kategori</th>
+                                    <th class="py-3 px-4 font-medium">Status</th>
+                                    <th class="py-3 pr-6 font-medium text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>${trs}</tbody>
                         </table>
                     </div>
-                </div></div> <!-- closes max-w-6xl -->
+                </div>
             `;
         }
 
         function openModal(type, data = null) {
             state.modalConfig = { type, data };
-            els.modalContainer.classList.remove('hidden');
             let content = '';
 
-            // Generate HTML based on Modal Type
             if (type === 'upload') {
-                let catOpts = state.categories.map(c => `<option value="${c.id}">${escapeHTML(c.name)}</option>`).join('');
-                let vilOpts = state.villages.map(v => `<option value="${v.id}">${escapeHTML(v.name)}</option>`).join('');
+                let catOpts = state.categories.map(c => `<option value="${c.id}" ${data?.preCat === c.id ? 'selected' : ''}>${escapeHTML(c.name)}</option>`).join('');
+                let vilOpts = state.villages.map(v => `<option value="${v.id}" ${data?.preVil === v.id ? 'selected' : ''}>${escapeHTML(v.name)}</option>`).join('');
                 
                 content = `
-                    <form id="form-upload">
-                        <div class="flex items-center gap-3 mb-6">
-                            <div class="w-10 h-10 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center shrink-0"><i class="ph-bold ph-cloud-arrow-up text-xl"></i></div>
-                            <div><h3 class="text-lg font-bold text-white">Unggah ke Server (Cloud)</h3><p class="text-xs text-slate-400">File akan disimpan permanen.</p></div>
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-bold ph-upload-simple text-brand-primary"></i> Unggah Dokumen</h3>
+                        <button class="btn-close-modal text-slate-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <form id="form-upload" class="space-y-4">
+                        <div id="upload-error" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm text-center font-medium animate-fade-in"></div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">File Dokumen (PDF/JPG/PNG)</label>
+                            <input type="file" id="upload-file" accept=".pdf,image/*" required class="w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20 bg-[#131b2d] border border-slate-700/50 rounded-xl p-1 focus:outline-none focus:border-brand-primary" />
+                            <p class="text-[10px] text-slate-500 mt-1">*Gambar akan otomatis dikompresi agar cepat diunggah.</p>
                         </div>
-                        <div id="upload-error-box" class="hidden mb-4 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex gap-2"><i class="ph-fill ph-warning-circle"></i> <span id="upload-error-msg"></span></div>
-                        <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih File Fisik (PDF, Excel, dll)</label>
-                                <input type="file" id="input-file" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2 text-sm text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-primary/20 file:text-brand-primary cursor-pointer" required />
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Kategori</label>
-                                    <select id="input-cat" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-3 py-2.5 text-sm text-white focus:border-brand-primary outline-none"><option value="">-- Pilih --</option>${catOpts}</select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-400 mb-1.5">Desa</label>
-                                    <select id="input-vil" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-3 py-2.5 text-sm text-white focus:border-brand-primary outline-none"><option value="">-- Pilih --</option>${vilOpts}</select>
-                                </div>
-                            </div>
-                            <div id="upload-progress-container" class="hidden w-full bg-slate-800 rounded-full h-2.5 mt-4">
-                                <div id="upload-progress-bar" class="bg-brand-primary h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                <p id="upload-progress-text" class="text-[10px] text-slate-400 mt-1 text-right">Mengunggah: 0%</p>
-                            </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Kategori Laporan</label>
+                            <select id="upload-cat" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary">${catOpts}</select>
                         </div>
-                        <div class="flex gap-3">
-                            <button type="button" class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Batal</button>
-                            <button type="submit" id="btn-submit-upload" class="flex-1 py-2.5 rounded-xl bg-brand-primary hover:bg-indigo-500 text-white text-sm font-medium shadow-lg flex justify-center items-center gap-2">Unggah File</button>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Asal Kampung</label>
+                            <select id="upload-vil" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary">${vilOpts}</select>
                         </div>
+                        <div class="pt-2">
+                            <button type="submit" class="w-full bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg">Mulai Unggah</button>
+                        </div>
+                    </form>
+                `;
+            } else if (type === 'add_cat') {
+                content = `
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-bold ph-folder-plus text-brand-primary"></i> Tambah Kategori</h3>
+                        <button class="btn-close-modal text-slate-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <form id="form-add-cat" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nama Kategori</label>
+                            <input type="text" id="cat-name" required placeholder="Contoh: Laporan Keuangan" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                        </div>
+                        <div class="pt-2"><button type="submit" class="w-full bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-2.5 transition-all">Simpan</button></div>
+                    </form>
+                `;
+            } else if (type === 'add_village') {
+                content = `
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-bold ph-house-line text-brand-primary"></i> Tambah Kampung</h3>
+                        <button class="btn-close-modal text-slate-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <form id="form-add-vil" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nama Kampung</label>
+                            <input type="text" id="vil-name" required placeholder="Contoh: Kampung Baru" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                        </div>
+                        <div class="pt-2"><button type="submit" class="w-full bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-2.5 transition-all">Simpan</button></div>
                     </form>
                 `;
             } else if (type === 'preview_doc') {
                 content = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-white truncate pr-4">${escapeHTML(data.name)}</h3>
+                        <button class="btn-close-modal text-slate-400 hover:text-white shrink-0"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <div class="bg-[#131b2d] rounded-xl overflow-hidden flex items-center justify-center min-h-[250px] border border-slate-700/50">
+                        ${data.type.includes('image') ? `<img src="${data.url}" class="max-w-full max-h-[60vh] object-contain" />` : `<i class="ph-fill ph-file-pdf text-6xl text-rose-500"></i><p class="mt-4 text-slate-400 text-sm">Pratinjau PDF tidak didukung penuh.</p>`}
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <a href="${data.url}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-brand-primary hover:bg-indigo-500 text-white text-center font-bold rounded-xl py-2.5 text-sm transition-all shadow-lg flex items-center justify-center gap-2"><i class="ph-bold ph-download-simple"></i> Unduh / Buka Penuh</a>
+                    </div>
+                `;
+            } else if (type === 'edit_print') {
+                const c = state.printConfig;
+                content = `
+                    <div class="flex justify-between items-center mb-5">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-bold ph-printer text-brand-primary"></i> Pengaturan Cetak & Kop</h3>
+                        <button class="btn-close-modal text-slate-400 hover:text-white"><i class="ph-bold ph-x text-lg"></i></button>
+                    </div>
+                    <form id="form-edit-print" class="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Tingkat Pemerintahan</label>
+                                <input type="text" id="pc-kab" value="${escapeHTML(c.kabupaten)}" placeholder="Cth: KABUPATEN MANOKWARI" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nama Instansi</label>
+                                <input type="text" id="pc-inst" value="${escapeHTML(c.instansi)}" placeholder="Cth: DISTRIK SIDEY" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Pengisian Jalan / Alamat Lengkap</label>
+                            <input type="text" id="pc-almt" value="${escapeHTML(c.alamat)}" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Nama Kepala Distrik</label>
+                                <input type="text" id="pc-kep" value="${escapeHTML(c.kepala)}" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">NIP Kepala Distrik</label>
+                                <input type="text" id="pc-nip" value="${escapeHTML(c.nip)}" required class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-primary" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Ukuran Logo (px)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="range" id="pc-logo-size" min="40" max="250" value="${c.logoSize !== undefined ? c.logoSize : 96}" class="w-full accent-brand-primary" oninput="document.getElementById('size-val').innerText = this.value + 'px'" />
+                                    <span id="size-val" class="text-xs text-brand-primary font-bold w-10 text-right">${c.logoSize !== undefined ? c.logoSize : 96}px</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Geser Kiri/Kanan (px)</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="range" id="pc-logo-offset" min="-150" max="150" value="${c.logoOffset !== undefined ? c.logoOffset : 0}" class="w-full accent-brand-primary" oninput="document.getElementById('offset-val').innerText = this.value + 'px'" />
+                                    <span id="offset-val" class="text-xs text-brand-primary font-bold w-12 text-right">${c.logoOffset !== undefined ? c.logoOffset : 0}px</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wider">Upload Logo Kop (Opsional)</label>
+                            <input type="file" id="pc-logo" accept="image/*" class="w-full text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20 bg-[#131b2d] border border-slate-700/50 rounded-xl p-1 focus:outline-none focus:border-brand-primary" />
+                            <p class="text-[10px] text-slate-500 mt-1">*Biarkan kosong jika logo tidak ingin diganti.</p>
+                        </div>
+                        <div class="pt-2"><button type="submit" class="w-full bg-brand-primary hover:bg-indigo-500 text-white font-bold rounded-xl py-3 transition-all shadow-lg flex items-center justify-center gap-2"><i class="ph-bold ph-floppy-disk"></i> Simpan Format Cetak</button></div>
+                    </form>
+                `;
+            } else if (type === 'delete_doc' || type === 'delete_cat') {
+                const title = type === 'delete_doc' ? 'Hapus Dokumen' : 'Hapus Kategori';
+                const msg = type === 'delete_doc' ? `Yakin ingin menghapus dokumen <b>${escapeHTML(data.name)}</b>? File juga akan dihapus dari cloud.` : `Yakin ingin menghapus kategori <b>${escapeHTML(data.name)}</b>?`;
+                content = `
                     <div class="text-center">
-                        <div class="w-16 h-16 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center mx-auto mb-4"><i class="ph-fill ph-file-pdf text-3xl"></i></div>
-                        <h3 class="text-lg font-bold text-white mb-1 truncate px-4">${escapeHTML(data.name)}</h3>
-                        <p class="text-sm text-slate-400 mb-6">${escapeHTML(data.size)} • Disimpan di Server Cloud</p>
+                        <div class="w-16 h-16 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto mb-4"><i class="ph-bold ph-warning text-3xl"></i></div>
+                        <h3 class="text-lg font-bold text-white mb-2">${title}</h3>
+                        <p class="text-sm text-slate-400 mb-6">${msg}</p>
                         <div class="flex gap-3">
-                            <button class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Tutup</button>
-                            <a href="${data.fileUrl}" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 rounded-xl bg-brand-primary hover:bg-indigo-500 text-white text-sm font-medium shadow-lg flex items-center justify-center gap-2"><i class="ph-bold ph-download-simple"></i> Unduh Asli</a>
+                            <button class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-medium">Batal</button>
+                            <button id="btn-confirm-delete" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold">Ya, Hapus</button>
                         </div>
                     </div>
                 `;
-            } else if (['edit_doc', 'approve_doc', 'delete_doc', 'add_cat', 'edit_cat', 'delete_cat', 'add_village'].includes(type)) {
-                // Dynamic Admin Modals
-                let title = '', icon = '', color = '', extraHTML = '', requirePass = false, requireInput = false, inputLabel = '', inputVal = '';
-                
-                if (type === 'edit_doc') {
-                    title = 'Edit Nama Dokumen'; icon = 'ph-pencil-simple'; color = 'amber-500'; requirePass = true; requireInput = true; inputLabel = 'Nama Baru'; inputVal = data.name;
-                } else if (type === 'approve_doc') {
-                    title = 'Setujui Dokumen?'; icon = 'ph-check'; color = 'emerald-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Dokumen "${escapeHTML(data.name)}" akan ditandai sebagai disetujui.</p>`;
-                } else if (type === 'delete_doc') {
-                    title = 'Hapus Permanen?'; icon = 'ph-trash'; color = 'rose-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Dokumen "${escapeHTML(data.name)}" akan dihapus dari server.</p>`;
-                } else if (type === 'add_cat') {
-                    title = 'Tambah Kategori'; icon = 'ph-plus'; color = 'brand-primary'; requireInput = true; inputLabel = 'Nama Kategori';
-                } else if (type === 'edit_cat') {
-                    title = 'Edit Kategori'; icon = 'ph-pencil-simple'; color = 'amber-500'; requirePass = true; requireInput = true; inputLabel = 'Nama Kategori'; inputVal = data.name;
-                } else if (type === 'delete_cat') {
-                    title = 'Hapus Kategori?'; icon = 'ph-trash'; color = 'rose-500'; requirePass = true; extraHTML = `<p class="text-sm text-slate-400 text-center mb-6 px-2">Kategori "${escapeHTML(data.name)}" akan dihapus permanen.</p>`;
-                } else if (type === 'add_village') {
-                    title = 'Tambah Kampung Baru'; icon = 'ph-house-line'; color = 'brand-primary'; requireInput = true; inputLabel = 'Nama Kampung';
+            }
+
+            els.modalContent.innerHTML = content;
+            els.modalContainer.classList.remove('hidden');
+
+            // Attach Modal Events
+            setTimeout(() => {
+                const formUpload = document.getElementById('form-upload');
+                if (formUpload) formUpload.addEventListener('submit', handleFastUpload);
+
+                const formAddCat = document.getElementById('form-add-cat');
+                if (formAddCat) formAddCat.addEventListener('submit', handleAddCategory);
+
+                const formAddVil = document.getElementById('form-add-vil');
+                if (formAddVil) formAddVil.addEventListener('submit', handleAddVillage);
+
+                const formEditPrint = document.getElementById('form-edit-print');
+                if (formEditPrint) {
+                    formEditPrint.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const btn = formEditPrint.querySelector('button[type="submit"]');
+                        btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i> Menyimpan...';
+                        
+                        const newConfig = {
+                            kabupaten: document.getElementById('pc-kab').value,
+                            instansi: document.getElementById('pc-inst').value,
+                            alamat: document.getElementById('pc-almt').value,
+                            kepala: document.getElementById('pc-kep').value,
+                            nip: document.getElementById('pc-nip').value,
+                            logoSize: parseInt(document.getElementById('pc-logo-size').value) || 96,
+                            logoOffset: parseInt(document.getElementById('pc-logo-offset').value) || 0,
+                            logo: state.printConfig.logo
+                        };
+
+                        const file = document.getElementById('pc-logo').files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                newConfig.logo = event.target.result;
+                                state.printConfig = newConfig;
+                                localStorage.setItem('sip_print_config', JSON.stringify(newConfig));
+                                closeModal();
+                                renderContent();
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            state.printConfig = newConfig;
+                            localStorage.setItem('sip_print_config', JSON.stringify(newConfig));
+                            closeModal();
+                            renderContent();
+                        }
+                    });
                 }
 
-                content = `
-                    <form id="form-admin-action">
-                        <div class="w-12 h-12 rounded-full bg-${color}/20 text-${color} flex items-center justify-center mx-auto mb-4"><i class="ph-bold ${icon} text-2xl"></i></div>
-                        <h3 class="text-lg font-bold text-white text-center mb-2">${title}</h3>
-                        ${extraHTML}
-                        <div id="modal-error-box" class="hidden mb-4 p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs text-center"></div>
-                        <div class="space-y-4 mb-6">
-                            ${requireInput ? `<div><label class="block text-xs font-medium text-slate-400 mb-1.5">${inputLabel}</label><input type="text" id="modal-input-text" value="${escapeHTML(inputVal)}" class="w-full bg-[#131b2d] border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-brand-primary" required /></div>` : ''}
-                            ${requirePass ? `<div><label class="block text-xs font-medium text-${color} mb-1.5">Password Administrator</label><input type="password" id="modal-input-pass" class="w-full bg-[#131b2d] border border-${color}/30 rounded-xl px-4 py-3 text-sm text-white outline-none" required /></div>` : ''}
-                        </div>
-                        <div class="flex gap-3">
-                            <button type="button" class="btn-close-modal flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 text-sm font-medium">Batal</button>
-                            <button type="submit" id="btn-submit-action" class="flex-1 py-2.5 rounded-xl bg-${color} hover:bg-opacity-80 text-white text-sm font-medium shadow-lg">Simpan</button>
-                        </div>
-                    </form>
-                `;
-            }
-            
-            els.modalContent.innerHTML = content;
-
-            // Bind Modal Forms Dynamically
-            const formUpload = document.getElementById('form-upload');
-            if (formUpload) formUpload.addEventListener('submit', handleUploadSubmit);
-
-            const formAdmin = document.getElementById('form-admin-action');
-            if (formAdmin) formAdmin.addEventListener('submit', handleAdminAction);
+                const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+                if (btnConfirmDelete) {
+                    btnConfirmDelete.addEventListener('click', async () => {
+                        btnConfirmDelete.innerHTML = '<i class="ph-bold ph-spinner animate-spin"></i>';
+                        if (state.modalConfig.type === 'delete_doc') await doDeleteDoc(state.modalConfig.data);
+                        if (state.modalConfig.type === 'delete_cat') await doDeleteCat(state.modalConfig.data.id);
+                        closeModal();
+                    });
+                }
+            }, 50);
         }
 
         function closeModal() {
-            if (state.isUploading) return;
-            state.modalConfig = { type: null, data: null };
             els.modalContainer.classList.add('hidden');
             els.modalContent.innerHTML = '';
+            state.modalConfig = null;
         }
 
-        async function handleUploadSubmit(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('input-file');
-            const file = fileInput.files[0];
-            const catId = document.getElementById('input-cat').value;
-            const vilId = document.getElementById('input-vil').value;
-            const errorBox = document.getElementById('upload-error-box');
-            const errorMsg = document.getElementById('upload-error-msg');
-            const btnSubmit = document.getElementById('btn-submit-upload');
+        async function compressImage(file) {
+            if (!file.type.startsWith('image/')) return file; // Skip PDF or non-images
+            
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1280;
+                        const MAX_HEIGHT = 1280;
+                        let width = img.width;
+                        let height = img.height;
 
-            if (!file || !catId || !vilId) return;
-            if (file.size > 524288000) {
-                errorMsg.innerText = 'Ukuran file melebihi batas (500 MB)!';
-                errorBox.classList.remove('hidden'); return;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            // Compress to 70% quality JPEG for speed
+                            const newFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+                            resolve(newFile);
+                        }, 'image/jpeg', 0.7);
+                    };
+                };
+            });
+        }
+
+        async function handleFastUpload(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('upload-file');
+            const fileOriginal = fileInput.files[0];
+            const catId = document.getElementById('upload-cat').value;
+            const vilId = document.getElementById('upload-vil').value;
+            const errorContainer = document.getElementById('upload-error');
+
+            if (!fileOriginal) return;
+
+            // Validasi ukuran maksimal file (400 MB)
+            const maxSizeInBytes = 400 * 1024 * 1024; // 400 MB
+            if (fileOriginal.size > maxSizeInBytes) {
+                if (errorContainer) {
+                    errorContainer.innerText = 'Gagal: Ukuran file melebihi batas maksimal 400 MB.';
+                    errorContainer.classList.remove('hidden');
+                }
+                return; // Hentikan proses unggah
             }
 
-            state.isUploading = true;
-            btnSubmit.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Proses...`;
-            btnSubmit.disabled = true;
-            document.querySelectorAll('.btn-close-modal').forEach(b => b.disabled = true);
-            
-            document.getElementById('upload-progress-container').classList.remove('hidden');
-            const progressBar = document.getElementById('upload-progress-bar');
-            const progressText = document.getElementById('upload-progress-text');
+            // Instantly close modal so user is not blocked
+            closeModal();
+
+            // Prepare Toast UI
+            els.uploadToast.classList.remove('hidden');
+            els.toastFilename.innerText = fileOriginal.name;
+            els.toastStatus.innerText = 'Mengoptimalkan file...';
+            els.toastPercentage.innerText = '0%';
+            els.toastProgressBar.style.width = '0%';
+            els.toastIcon.className = 'ph-bold ph-spinner animate-spin text-lg';
 
             try {
-                const filePath = `documents/${appId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-                const storageRef = ref(storage, filePath);
-                const uploadTask = uploadBytesResumable(storageRef, file);
+                // Compress image if applicable (fast processing)
+                const file = await compressImage(fileOriginal);
+                els.toastStatus.innerText = 'Mengunggah ke Cloud...';
+
+                // Setup Firebase Storage
+                const storagePath = `artifacts/${appId}/public/data/documents/${Date.now()}_${file.name}`;
+                const storageRef = ref(storage, storagePath);
                 
+                // Start Resumable Upload
+                const uploadTask = uploadBytesResumable(storageRef, file);
+
                 uploadTask.on('state_changed', 
                     (snapshot) => {
+                        // Non-blocking progress update
                         const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                        progressBar.style.width = `${progress}%`;
-                        progressText.innerText = `Mengunggah: ${progress}%`;
-                    },
+                        els.toastPercentage.innerText = progress + '%';
+                        els.toastProgressBar.style.width = progress + '%';
+                    }, 
                     (error) => {
-                        console.error(error);
-                        errorMsg.innerText = 'Gagal mengunggah file.';
-                        errorBox.classList.remove('hidden');
-                        resetUploadUI(btnSubmit);
-                    },
+                        console.error("Upload error:", error);
+                        els.toastStatus.innerText = 'Gagal mengunggah!';
+                        els.toastIcon.className = 'ph-bold ph-x-circle text-rose-500 text-lg';
+                        setTimeout(() => els.uploadToast.classList.add('hidden'), 3000);
+                    }, 
                     async () => {
+                        // Upload completed successfully
+                        els.toastStatus.innerText = 'Menyimpan data...';
+                        els.toastPercentage.innerText = '100%';
+                        els.toastProgressBar.style.width = '100%';
+                        
                         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                        const newDoc = {
+                        
+                        // Save document reference to Firestore
+                        const docData = {
                             name: file.name,
                             categoryId: catId,
                             villageId: vilId,
-                            size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-                            status: state.userRole === 'admin' ? 'DISETUJUI' : 'MENUNGGU',
-                            fileUrl: downloadURL,
-                            fileType: file.type,
-                            storagePath: uploadTask.snapshot.ref.fullPath,
-                            createdAt: new Date().toISOString()
+                            url: downloadURL,
+                            path: storagePath,
+                            type: file.type,
+                            size: file.size,
+                            status: 'MENUNGGU',
+                            timestamp: serverTimestamp()
                         };
+
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'documents'), docData);
                         
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'documents'), newDoc);
+                        // Show success state on toast briefly
+                        els.toastIcon.className = 'ph-bold ph-check-circle text-emerald-400 text-lg';
+                        els.toastStatus.innerText = 'Selesai diunggah!';
+                        els.toastFilename.innerText = 'Berhasil';
                         
-                        state.activeMenu = `cv_${catId}_${vilId}`;
-                        renderSidebar();
-                        renderContent();
-                        
-                        resetUploadUI(btnSubmit);
-                        document.getElementById('form-upload').reset(); // Kosongkan form setelah sukses
-                        closeModal();
+                        setTimeout(() => {
+                            els.uploadToast.classList.add('hidden');
+                        }, 2500);
                     }
                 );
-            } catch (err) {
-                errorMsg.innerText = 'Terjadi kesalahan sistem.';
-                errorBox.classList.remove('hidden');
-                resetUploadUI(btnSubmit);
+            } catch (error) {
+                console.error("Fast upload error:", error);
+                els.toastStatus.innerText = 'Terjadi kesalahan sistem.';
+                setTimeout(() => els.uploadToast.classList.add('hidden'), 3000);
             }
         }
 
-        function resetUploadUI(btn) {
-            state.isUploading = false;
-            btn.innerHTML = 'Unggah File';
-            btn.disabled = false;
-            document.querySelectorAll('.btn-close-modal').forEach(b => b.disabled = false);
-        }
-
-        async function handleAdminAction(e) {
+        async function handleAddCategory(e) {
             e.preventDefault();
-            const type = state.modalConfig.type;
-            const data = state.modalConfig.data;
-            const errorBox = document.getElementById('modal-error-box');
-            const passInput = document.getElementById('modal-input-pass');
-            const textInput = document.getElementById('modal-input-text');
-            const btn = document.getElementById('btn-submit-action');
-            
-            // Password validation for restricted actions
-            if (['edit_doc', 'approve_doc', 'delete_doc', 'edit_cat', 'delete_cat'].includes(type)) {
-                if (passInput && passInput.value !== ADMIN_PASSWORD) {
-                    errorBox.innerText = 'Password Administrator salah!';
-                    errorBox.classList.remove('hidden'); return;
-                }
-            }
-
-            btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i>`;
-            btn.disabled = true;
-
-            try {
-                if (type === 'edit_doc') {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id);
-                    await updateDoc(docRef, { name: textInput.value });
-                } else if (type === 'approve_doc') {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id);
-                    await updateDoc(docRef, { status: 'DISETUJUI' });
-                } else if (type === 'delete_doc') {
-                    if (data.storagePath) {
-                        const storageRef = ref(storage, data.storagePath);
-                        await deleteObject(storageRef).catch(() => console.log('File fisik tidak ditemukan'));
-                    }
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', data.id));
-                } else if (type === 'add_cat') {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'categories'), { name: textInput.value });
-                } else if (type === 'edit_cat') {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', data.id), { name: textInput.value });
-                } else if (type === 'delete_cat') {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', data.id));
-                    state.activeMenu = 'dashboard';
-                } else if (type === 'add_village') {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'villages'), { name: textInput.value });
-                }
+            const name = document.getElementById('cat-name').value.trim();
+            if (name) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'categories'), { name });
                 closeModal();
-            } catch (err) {
-                console.error(err);
-                errorBox.innerText = 'Gagal menyimpan data ke server.';
-                errorBox.classList.remove('hidden');
-                btn.innerText = 'Coba Lagi';
-                btn.disabled = false;
             }
         }
 
-        // Start App
-        window.addEventListener('load', () => {
-            // Delay slighty for visual transition
-            setTimeout(initApp, 500);
-        });
+        async function handleAddVillage(e) {
+            e.preventDefault();
+            const name = document.getElementById('vil-name').value.trim();
+            if (name) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'villages'), { name });
+                closeModal();
+            }
+        }
+
+        async function doDeleteDoc(docData) {
+            try {
+                if (docData.path) {
+                    const fileRef = ref(storage, docData.path);
+                    await deleteObject(fileRef).catch(e => console.log('File not found in storage, but deleting doc anyway', e));
+                }
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', docData.id));
+            } catch (e) {
+                console.error("Delete doc error", e);
+            }
+        }
+
+        async function doDeleteCat(catId) {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', catId));
+                if (state.activeMenu === 'c_' + catId) state.activeMenu = 'dashboard';
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function handleApproveDoc(docId) {
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'documents', docId), {
+                    status: 'DISETUJUI'
+                });
+            } catch (e) {
+                console.error("Approve error", e);
+            }
+        }
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', initApp);
+
     </script>
 </body>
 </html>
